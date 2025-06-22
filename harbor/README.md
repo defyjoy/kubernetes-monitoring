@@ -12,3 +12,6 @@ helm install my-harbor harbor/harbor \
 ```
 
 
+```
+helm upgrade -i harbor harbor/harbor --create-namespace -n harbor -f values.yaml
+```
