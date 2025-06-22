@@ -1,0 +1,1 @@
+curl http://172.18.0.0.nip.io/select/logsql/query -d 'query=* | count()'

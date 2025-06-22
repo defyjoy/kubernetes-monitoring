@@ -1,0 +1,98 @@
+# customConfig:
+#   data_dir: /vector-data-dir
+#   # api:
+#   #   enabled: true
+#   #   address: 127.0.0.1:8686
+#   #   playground: false
+#   sources:
+#     kubernetes_logs:
+#         type: kubernetes_logs
+#         include_namespaces: ["default", "kube-system"]   # Optional filtering
+#         exclude_namespaces: ["vector"]                  # Exclude self, if needed
+#         # include_labels:
+#         #   app: myapp                                     # Filter specific pods
+#         # ignore_older: 1h                               # Skip old logs
+#         max_line_length: 102400                          # Handle long log lines
+#         glob_minimum_cooldown_ms: 1000                   # Improve file discovery
+#   sinks:
+#     victorialogs:
+#       type: loki
+#       inputs: ["kubernetes_logs"]
+#       endpoint: http://172.18.0.0.nip.io/loki/api/v1/push
+#       encoding:
+#         codec: json
+#       labels:
+#         job: "vector"
+#         # host: "{{ host }}"
+#         # namespace: "{{ kubernetes.pod_namespace }}"
+#         # pod: "{{ kubernetes.pod_name }}"
+
+---
+# values.yaml
+
+role: "Agent"  # Other options: "Aggregator"
+
+# Deployment details
+replicaCount: 1
+
+image:
+  repository: timberio/vector
+  tag: "0.38.0-debian"  # Check for latest version
+  pullPolicy: IfNotPresent
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+# Vector agent configuration
+customConfig:
+  data_dir: /vector-data-dir
+  api:
+    enabled: true
+    address: 127.0.0.1:8686
+    playground: false
+  sources:
+    kubernetes_logs:
+      type: kubernetes_logs
+  transforms:
+    transform-kubelogs:
+      inputs:
+        - kubernetes_logs
+      type: remap
+      source: |
+        del(.kubernetes.pod_labels)
+        ._msg = .message
+        .formatted_message = parse_json!(.message)
+
+  sinks:
+    victorialogs:
+      type: loki
+      inputs:
+        - transform-kubelogs
+      endpoint: http://172.18.0.0.nip.io/insert
+      encoding:
+        codec: json
+      labels:
+        job: vector
+        # host: "{{`{{ host }}`}}"
+      healthcheck: false
+
+serviceAccount:
+  create: true
+  name: ""
+
+tolerations:
+  - key: "node-role.kubernetes.io/master"
+    operator: "Exists"
+    effect: "NoSchedule"
+
+nodeSelector: {}
+
+affinity: {}
+
+service:
+  enabled: false

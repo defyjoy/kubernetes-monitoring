@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: json-human-logger
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: json-human-logger
+  template:
+    metadata:
+      labels:
+        app: json-human-logger
+    spec:
+      containers:
+        - name: json-human-logger
+          image: curlimages/curl
+          command: ["/bin/sh", "-c"]
+          args:
+            - >
+              while true; do
+                echo "$(curl -s https://api.json-generator.com/templates/2JoSjvtna0Im/data?access_token=b9bst5vhand34erthrwm3qxi460n1dutqnon1r1p)" 
+                sleep 5;
+              done
+          resources:
+            limits:
+              memory: "64Mi"
+              cpu: "50m"

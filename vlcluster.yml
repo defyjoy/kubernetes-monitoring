@@ -1,0 +1,12 @@
+apiVersion: operator.victoriametrics.com/v1
+kind: VLCluster
+metadata:
+  name: example
+spec:
+  vlinsert:
+    replicaCount: 1
+  vlselect:
+    replicaCount: 1
+  vlstorage:
+    retentionPeriod: "1y"
+    replicaCount: 2

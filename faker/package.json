@@ -1,0 +1,12 @@
+{
+    "name": "json-server-faker",
+    "version": "1.0.0",
+    "scripts": {
+      "start": "node server.js"
+    },
+    "dependencies": {
+      "json-server": "^0.17.3",
+      "faker": "^5.5.3"
+    }
+  }
+  
