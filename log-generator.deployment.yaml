@@ -1,7 +1,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: json-human-logger
+  name: json-logger
+  labels: 
+    name: json-logger
 spec:
   replicas: 1
   selector:

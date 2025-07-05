@@ -10,3 +10,7 @@ spec:
   vlstorage:
     retentionPeriod: "1y"
     replicaCount: 2
+  requestsLoadBalancer:
+    enabled: true 
+    spec:
+     replicaCount: 2

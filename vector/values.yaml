@@ -66,7 +66,7 @@ customConfig:
       source: |
         del(.kubernetes.pod_labels)
         ._msg = .message
-        .formatted_message = parse_json!(.message)
+        # .formatted_message = parse_json!(.message)
 
   sinks:
     victorialogs:
@@ -78,8 +78,18 @@ customConfig:
         codec: json
       labels:
         job: vector
-        # host: "{{`{{ host }}`}}"
+        namespace: "{{`{{ kubernetes.pod_namespace }}`}}"
+        container: "{{`{{ kubernetes.container_name }}`}}"
       healthcheck: false
+      request:
+        in_flight_limit: 1
+      out_of_order_action: accept
+      path: /loki/api/v1/push
+      remove_timestamp: true
+      auth:
+        strategy: basic
+        user: admin
+        password: password
 
 serviceAccount:
   create: true
