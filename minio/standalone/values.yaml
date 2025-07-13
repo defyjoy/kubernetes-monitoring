@@ -37,9 +37,14 @@ securityContext:
   fsGroup: 1000
 
 buckets:
-  - name: velero
+  # - name: velero
+  #   policy: none
+  # - name: test
+  #   policy: none
+
+  - name: loki-aws-dev-ruler
     policy: none
-  - name: test
+  - name: loki-s3-dev-chunks
     policy: none
 
 persistence:

@@ -106,6 +106,7 @@ gateway:
 
 # Since we are using basic auth, we need to pass the username and password to the canary
 lokiCanary:
+  lokiurl: loki.172.18.0.0.nip.io
   extraArgs:
     - -pass=$(LOKI_PASS)
     - -user=$(LOKI_USER)

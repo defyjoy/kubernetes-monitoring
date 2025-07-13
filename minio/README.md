@@ -4,6 +4,7 @@ Ref - [https://medium.com/@alesson.viana/minio-in-a-kubernetes-cluster-316ed8f41
 
 
 # MINIO OPERATOR (TODO)
+
 ## HELM REPO SETUP
 
 Operator ( not using this for now )
