@@ -1,0 +1,23 @@
+global:
+  defaultStorageClass: "openebs-minio-localpv"
+
+auth:
+  rootUser: admin
+  rootPassword: "password"
+
+clusterDomain: minio.172.18.0.0.nip.io
+
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  hostname: minio.172.18.0.0.nip.io
+  path: /
+  pathType: Prefix
+  annotations: {}
+  tls: false
+  selfSigned: false
+  extraHosts: []
+  extraPaths: []
+  extraTls: []
+  secrets: []
+  extraRules: []
