@@ -1,0 +1,19 @@
+ingress:
+  api:
+    enabled: false
+    ingressClassName: nginx
+    labels: { }
+    annotations: { }
+    tls: [ ]
+    host: minio.172.18.0.0.nip.io
+    path: /
+    pathType: Prefix
+  console:
+    enabled: true
+    ingressClassName: nginx
+    labels: { }
+    annotations: { }
+    tls: [ ]
+    host: minio.172.18.0.0.nip.io
+    path: /
+    pathType: Prefix

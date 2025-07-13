@@ -1,0 +1,40 @@
+loki:
+  auth_enabled: false
+
+  storage:
+    type: s3
+    bucketNames:
+      chunks: loki-chunks
+      ruler: loki-ruler
+      admin: loki-admin
+    s3:
+      endpoint: minio.minio.svc.cluster.local:9000
+      bucketnames: loki
+      access_key_id: minioadmin
+      secret_access_key: minioadmin
+      insecure: true  # disable TLS if using MinIO without HTTPS
+
+  schemaConfig:
+    configs:
+      - from: 2020-10-24
+        store: boltdb-shipper
+        object_store: s3
+        schema: v11
+        index:
+          prefix: index_
+          period: 24h
+
+  compactor:
+    shared_store: s3
+
+write:
+  replicas: 2
+
+read:
+  replicas: 2
+
+backend:
+  replicas: 1
+
+gateway:
+  replicas: 1
