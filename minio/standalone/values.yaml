@@ -1,0 +1,61 @@
+mode: standalone
+
+rootUser: "minioadmin"
+rootPassword: "minioadmin"
+
+persistence:
+  enabled: true
+  existingClaim: minio
+  storageClass: "nfs-storage-minio"  # necessário deixar vazio quando usa existingClaim
+
+# service:
+#   type: LoadBalancer
+#   annotations:
+#     metallb.universe.tf/loadBalancerIPs: 192.168.2.219
+#   port: 9000
+
+# consoleService:
+#   type: LoadBalancer
+#   annotations:
+#     metallb.universe.tf/loadBalancerIPs: 192.168.2.220
+#   port: 9001
+
+ingress:
+  enabled: true
+
+resources:
+  requests:
+    memory: 512Mi
+    cpu: 500m
+
+postJob:
+  enabled: false
+
+securityContext:
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+
+buckets:
+  - name: velero
+    policy: none
+  - name: test
+    policy: none
+
+persistence:
+  enabled: true
+  storageClass: "openebs-minio-localpv"
+
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  path: /
+  hosts:
+    - minio.172.18.0.0.nip.io
+
+consoleIngress:
+  enabled: true
+  ingressClassName: nginx
+  path: /
+  hosts:
+    - console.minio.172.18.0.0.nip.io

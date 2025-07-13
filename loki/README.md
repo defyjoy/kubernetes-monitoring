@@ -1,5 +1,6 @@
 # INSTALLATION 
 
+Ref - [https://grafana.com/docs/loki/latest/setup/install/helm/deployment-guides/aws/](https://grafana.com/docs/loki/latest/setup/install/helm/deployment-guides/aws/?src=yt&mdm=social&cnt=description)
 
 
 ## HELM
@@ -12,6 +13,20 @@ helm repo update
 
 
 ## COMMAND
+
+create .htpasswd file. You'd be prompted for password
+```
+htpasswd -c .htpasswd admin
+kubectl create secret generic loki-basic-auth --from-file=.htpasswd -n loki
+```
+
+```
+kubectl create secret generic canary-basic-auth \
+  --from-literal=username=canaryadmin \
+  --from-literal=password=canarypassword \
+  -n loki
+```
+
 
 ```bash
 helm upgrade -i loki grafana/loki -n loki --create-namespace --wait -f values.yaml

@@ -11,6 +11,6 @@ helm repo update
 ## INSTALL
 
 ```
-helm upgrade -i monitoring prometheus-community/kube-prometheus-stack -f values.yaml -n kube-prometheus-stack --create-namespace --wait
+helm upgrade -i grafana-prom-stack prometheus-community/kube-prometheus-stack -f values.yaml -n kube-prometheus-stack --create-namespace --wait
 ```
 
