@@ -73,7 +73,8 @@ customConfig:
       type: loki
       inputs:
         - transform-kubelogs
-      endpoint: http://172.18.0.0.nip.io/insert
+      # endpoint: http://172.18.0.0.nip.io/insert # victoria logs loki format
+      endpoint: http://loki.172.18.0.0.nip.io
       encoding:
         codec: json
       labels:
