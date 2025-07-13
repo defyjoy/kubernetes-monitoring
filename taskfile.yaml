@@ -1,0 +1,73 @@
+version: '3'
+
+tasks:
+  create_cluster:
+    desc: Build the project
+    dir: ./kind
+    cmds:
+      - kind create cluster --name quick-start --config=kind.cfg
+      - go build -o bin/app main.go
+
+  install-repos:
+    desc: install all helm chart repos
+    cmds:
+      - helm repo add metallb https://metallb.github.io/metallb
+      - helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+      - helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+      - helm repo add minio https://charts.min.io/
+      - helm repo add grafana https://grafana.github.io/helm-charts
+      - helm repo add openebs https://openebs.github.io/openebs
+      - helm repo update
+
+  install-metallb:
+    desc: Install metallb in namespace metallb-system
+    dir: metallb
+    cmds: 
+     
+      - helm upgrade -i metallb metallb/metallb -n metallb-system --create-namespace --wait
+      - kubectl apply -f metallb-manifests.yaml
+
+  install-ingress-nginx:
+    desc: Install ingress-nginx controller in ingress-nginx namespace
+    dir: nginx-ingress
+    cmds: 
+      - helm upgrade -i ingress-nginx ingress-nginx/ingress-nginx -f values.yaml -n ingress-nginx --create-namespace --wait
+
+  install-kube-prometheus-stack:
+    desc: Install kube-prometheus-stack
+    dir: kube-prometheus-stack
+    cmds:
+      - helm upgrade -i grafana-prom-stack prometheus-community/kube-prometheus-stack -f values.yaml -n kube-prometheus-stack --create-namespace --wait
+
+  install-openebs:
+    desc: Install openebs storage solution
+    dir: openebs
+    cmds:
+      - helm upgrade -i openebs openebs/openebs -n openebs --create-namespace -f values.yaml --wait
+
+  install-standalone-minio:
+    desc: Install standalone minio
+    dir: minio/standalone
+    cmds:
+      - helm upgrade -i minio minio/minio -n minio --create-namespace -f values.yaml --wait
+  
+  install-loki:
+    desc: Install loki 
+    dir: loki
+    cmds:
+      - helm upgrade -i loki grafana/loki -n loki --create-namespace --wait -f values.yaml
+      
+  install:
+    desc: bootstrapping installations
+    deps:
+      - install-repos
+      - install-metallb
+      - install-ingress-nginx
+      - install-kube-prometheus-stack
+      - install-openebs
+      - install-standalone-minio
+      - install-loki
+    cmds:
+      - echo "Finished installing helm charts"
+
+  
