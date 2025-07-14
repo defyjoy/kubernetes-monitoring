@@ -29,3 +29,15 @@ grafana:
   #   size: 20Gi
   #   finalizers:
   #     - kubernetes.io/pvc-protection
+
+prometheus:
+  prometheusSpec:
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchExpressions:
+            - key: role
+              operator: In
+              values:
+              - worker

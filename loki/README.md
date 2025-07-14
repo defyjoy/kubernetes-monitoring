@@ -15,15 +15,16 @@ helm repo update
 ## COMMAND
 
 create .htpasswd file. You'd be prompted for password
+>> password: password
 ```
-htpasswd -c .htpasswd admin
+htpasswd -c .htpasswd loki
 kubectl create secret generic loki-basic-auth --from-file=.htpasswd -n loki
 ```
 
 ```
 kubectl create secret generic canary-basic-auth \
-  --from-literal=username=canaryadmin \
-  --from-literal=password=canarypassword \
+  --from-literal=username=loki \
+  --from-literal=password=password \
   -n loki
 ```
 
