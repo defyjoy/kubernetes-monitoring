@@ -45,8 +45,6 @@ mayastor:
   alloy:
     enabled: false
 
-
-
 engines:
   local:
     lvm:
@@ -56,8 +54,6 @@ engines:
   replicated:
     mayastor:
       enabled: false
-
-
 
 alloy:
   enabled: false

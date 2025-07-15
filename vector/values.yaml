@@ -26,18 +26,17 @@
 #         # host: "{{ host }}"
 #         # namespace: "{{ kubernetes.pod_namespace }}"
 #         # pod: "{{ kubernetes.pod_name }}"
-
 ---
 # values.yaml
 
-role: "Agent"  # Other options: "Aggregator"
+role: "Agent" # Other options: "Aggregator"
 
 # Deployment details
 replicaCount: 1
 
 image:
   repository: timberio/vector
-  tag: "0.38.0-debian"  # Check for latest version
+  tag: "0.38.0-debian" # Check for latest version
   pullPolicy: IfNotPresent
 
 resources:
@@ -61,7 +60,7 @@ customConfig:
   transforms:
     transform-kubelogs:
       inputs:
-        - kubernetes_logs
+      - kubernetes_logs
       type: remap
       source: |
         del(.kubernetes.pod_labels)
@@ -69,12 +68,33 @@ customConfig:
         # .formatted_message = parse_json!(.message)
 
   sinks:
-    victorialogs:
+    # victorialogs:
+    #   type: loki
+    #   inputs:
+    #   - transform-kubelogs
+    #   endpoint: http://172.18.0.0.nip.io/insert # victoria logs loki format
+    #   encoding:
+    #     codec: json
+    #   labels:
+    #     job: vector
+    #     namespace: "{{`{{ kubernetes.pod_namespace }}`}}"
+    #     container: "{{`{{ kubernetes.container_name }}`}}"
+    #   healthcheck: false
+    #   request:
+    #     in_flight_limit: 1
+    #   out_of_order_action: accept
+    #   path: /loki/api/v1/push
+    #   remove_timestamp: true
+    #   auth:
+    #     strategy: basic
+    #     user: admin
+    #     password: password
+    grafana-loki:
       type: loki
       inputs:
-        - transform-kubelogs
+      - transform-kubelogs
       # endpoint: http://172.18.0.0.nip.io/insert # victoria logs loki format
-      endpoint: http://loki.172.18.0.0.nip.io
+      endpoint: http://loki-gateway.172.18.0.0.nip.io
       encoding:
         codec: json
       labels:
@@ -89,17 +109,16 @@ customConfig:
       remove_timestamp: true
       auth:
         strategy: basic
-        user: admin
+        user: loki
         password: password
-
 serviceAccount:
   create: true
   name: ""
 
 tolerations:
-  - key: "node-role.kubernetes.io/master"
-    operator: "Exists"
-    effect: "NoSchedule"
+- key: "node-role.kubernetes.io/master"
+  operator: "Exists"
+  effect: "NoSchedule"
 
 nodeSelector: {}
 
