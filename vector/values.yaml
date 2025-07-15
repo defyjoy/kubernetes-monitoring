@@ -65,8 +65,7 @@ customConfig:
       source: |
         del(.kubernetes.pod_labels)
         ._msg = .message
-        # .formatted_message = parse_json!(.message)
-
+        # .formatted_message = parse_json!(.message)  
   sinks:
     # victorialogs:
     #   type: loki
