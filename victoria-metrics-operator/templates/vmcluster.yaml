@@ -1,0 +1,47 @@
+# apiVersion: operator.victoriametrics.com/v1beta1
+# kind: VMCluster
+# metadata:
+#   name: victoria-metrics-cluster
+# spec:
+#   retentionPeriod: "30d"  # Data retention period (e.g., 30 days)
+#   vmSelect:
+#     replicaCount: 2  # Number of VMSelect replicas for querying
+#     storage:
+#       volumeClaimTemplate:
+#         spec:
+#           storageClassName: standard  # Replace with your storage class
+#           resources:
+#             requests:
+#               storage: 10Gi
+#     resources:
+#       requests:
+#         memory: "512Mi"
+#         cpu: "500m"
+#       limits:
+#         memory: "1Gi"
+#         cpu: "1"
+#   vmInsert:
+#     replicaCount: 2  # Number of VMInsert replicas for ingestion
+#     resources:
+#       requests:
+#         memory: "512Mi"
+#         cpu: "500m"
+#       limits:
+#         memory: "1Gi"
+#         cpu: "1"
+#   vmStorage:
+#     replicaCount: 2  # Number of VMStorage replicas for data storage
+#     storage:
+#       volumeClaimTemplate:
+#         spec:
+#           storageClassName: standard  # Replace with your storage class
+#           resources:
+#             requests:
+#               storage: 50Gi
+#     resources:
+#       requests:
+#         memory: "1Gi"
+#         cpu: "1"
+#       limits:
+#         memory: "2Gi"
+#         cpu: "2"

@@ -1,0 +1,24 @@
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMAuth
+metadata:
+  name: victoria-metrics-auth
+spec:
+  selectAllByDefault: false
+  userSelector:
+    matchLabels:
+        auth: "true"
+  # Ingress configuration (optional, for external access)
+  ingress:
+    name: victoria-auth-ingress
+    class_name: nginx
+    host: vmauth.172.18.0.0.nip.io
+    annotations:
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+      nginx.ingress.kubernetes.io/rewrite-target: /
+      nginx.ingress.kubernetes.io/ssl-redirect: "false"
+      nginx.ingress.kubernetes.io/proxy-body-size: 100M
+    # annotations:
+    #   cert-maanger.io/cluster-issuer: letsencrypt
+    # extraTls:
+    #   - hosts: []
+    #     secretName: ""

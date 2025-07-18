@@ -1,6 +1,0 @@
-# INSTALL
-
-
-## SETUP CONFIGURATION
-
-```bash

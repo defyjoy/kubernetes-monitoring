@@ -17,6 +17,7 @@ tasks:
     - helm repo add grafana https://grafana.github.io/helm-charts
     - helm repo add openebs https://openebs.github.io/openebs
     - helm repo add vector https://helm.vector.dev
+    - helm repo add victoriametrics https://victoriametrics.github.io/helm-charts/
     - helm repo update
 
   install-metallb-manifests:
@@ -96,6 +97,14 @@ tasks:
     dir: vector
     cmds:
     - helm upgrade -i vector vector/vector -n vector --create-namespace -f values.yaml
+
+  install-victoria-metrics-operator:
+    desc: Install victoria metrics operator
+    dir: victoria-metrics-operator
+    cmds:
+    - helm dep up
+    - helm upgrade -i victoria-metrics-operator . -n victoria-metrics-operator --create-namespace -f values.yaml --wait
+
   deploy:
     desc: bootstrapping installations
     deps:
@@ -105,6 +114,7 @@ tasks:
     - install-openebs
     # - install-standalone-minio
     - install-loki-secrets
+    - install-vector
     # - install-loki
     cmds:
     - echo "Finished installing helm charts"

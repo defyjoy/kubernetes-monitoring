@@ -67,29 +67,30 @@ customConfig:
         ._msg = .message
         # .formatted_message = parse_json!(.message)  
   sinks:
-    # victorialogs:
-    #   type: loki
-    #   inputs:
-    #   - transform-kubelogs
-    #   endpoint: http://172.18.0.0.nip.io/insert # victoria logs loki format
-    #   encoding:
-    #     codec: json
-    #   labels:
-    #     job: vector
-    #     namespace: "{{`{{ kubernetes.pod_namespace }}`}}"
-    #     container: "{{`{{ kubernetes.container_name }}`}}"
-    #   healthcheck: false
-    #   request:
-    #     in_flight_limit: 1
-    #   out_of_order_action: accept
-    #   path: /loki/api/v1/push
-    #   remove_timestamp: true
-    #   auth:
-    #     strategy: basic
-    #     user: admin
-    #     password: password
+    victorialogs:
+      type: loki
+      inputs:
+      - transform-kubelogs
+      endpoint: http://vmauth.172.18.0.0.nip.io/insert # victoria logs loki format
+      encoding:
+        codec: json
+      labels:
+        job: vector
+        namespace: "{{`{{ kubernetes.pod_namespace }}`}}"
+        container: "{{`{{ kubernetes.container_name }}`}}"
+      healthcheck: false
+      request:
+        in_flight_limit: 1
+      out_of_order_action: accept
+      path: /loki/api/v1/push
+      remove_timestamp: true
+      auth:
+        strategy: basic
+        user: admin
+        password: password
     grafana-loki:
       type: loki
+      tenant_id: dev
       inputs:
       - transform-kubelogs
       # endpoint: http://172.18.0.0.nip.io/insert # victoria logs loki format
