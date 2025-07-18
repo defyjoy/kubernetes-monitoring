@@ -1,6 +1,7 @@
 import http from 'k6/http';
 import { check, sleep } from 'k6';
 import { Trend, Rate, Counter } from 'k6/metrics';
+import encoding from 'k6/encoding';
 
 // Custom metrics for ingestion and query performance
 const ingestionDuration = new Trend('ingestion_duration', true);
@@ -10,10 +11,20 @@ const queryErrorRate = new Rate('query_error_rate');
 const ingestionSuccessCounter = new Counter('ingestion_success_count');
 const querySuccessCounter = new Counter('query_success_count');
 
+const USERNAME = "admin"
+const PASSWORD = "password"
 // VictoriaLogs endpoint configuration
-const baseUrl = 'http://loki-gateway.172.18.0.0.nip.io'; // Replace with your VictoriaLogs instance URL
-const ingestionEndpoint = `${baseUrl}//loki/api/v1/push`; // Endpoint for log ingestion
+const baseUrl = 'http://vmauth.172.18.0.0.nip.io'; // Replace with your VictoriaLogs instance URL
+const ingestionEndpoint = `${baseUrl}/insert/loki/api/v1/push`; // Endpoint for log ingestion
 const queryEndpoint = `${baseUrl}/select/logsql/query`; // Endpoint for LogsQL queries
+
+// // Read username and password from environment variables.
+// const username = __ENV.USER;
+// const password = __ENV.PASSWORD;
+
+// Encode credentials for Basic Auth
+const credentials = `${USERNAME}:${PASSWORD}`;
+const encodedCredentials = encoding.b64encode(credentials);
 
 // Test configuration
 export const options = {
@@ -21,20 +32,21 @@ export const options = {
     ingestion: {
       executor: 'ramping-vus',
       stages: [
-        { duration: '30s', target: 10 }, // Ramp up to 10 VUs
-        { duration: '1m', target: 50 }, // Ramp up to 50 VUs
-        { duration: '1m', target: 50 }, // Hold at 50 VUs
-        { duration: '30s', target: 0 }, // Ramp down
+        { duration: '1s', target: 10 }, // Ramp up to 10 VUs
+        // { duration: '1m', target: 50 }, // Ramp up to 50 VUs
+        // { duration: '1m', target: 50 }, // Hold at 50 VUs
+        // { duration: '30s', target: 0 }, // Ramp down
       ],
     },
     querying: {
       executor: 'ramping-vus',
-      startTime: '2m', // Start querying after ingestion phase
+      // startTime: '2m', // Start querying after ingestion phase
+      startTime: '10s', // Start querying after ingestion phase
       stages: [
-        { duration: '30s', target: 5 }, // Ramp up to 5 VUs
-        { duration: '1m', target: 20 }, // Ramp up to 20 VUs
-        { duration: '1m', target: 20 }, // Hold at 20 VUs
-        { duration: '30s', target: 0 }, // Ramp down
+        { duration: '1s', target: 5 }, // Ramp up to 5 VUs
+        // { duration: '1m', target: 20 }, // Ramp up to 20 VUs
+        // { duration: '1m', target: 20 }, // Hold at 20 VUs
+        // { duration: '30s', target: 0 }, // Ramp down
       ],
     },
   },
@@ -50,30 +62,43 @@ export const options = {
 
 // Simulate log data for ingestion
 function generateLogEntry() {
+
   const timestamp = new Date().toISOString();
   return JSON.stringify({
-    _msg: `Test log entry at ${timestamp}`,
-    level: ['INFO', 'ERROR', 'DEBUG'][Math.floor(Math.random() * 3)],
-    service: `test-service-${Math.floor(Math.random() * 100)}`,
-    environment: 'production',
-    timestamp: timestamp,
+    streams: [
+      {
+        stream: { job: "k6-test", app: 'loadtest' },
+        values: [
+          `${Date.now() * 1_000_000}`, // time in nanoseconds
+          "this is a test log line from k6",
+          // {
+          //   _msg: `Test log entry at ${timestamp}`,
+          //   level: ['INFO', 'ERROR', 'DEBUG'][Math.floor(Math.random() * 3)],
+          //   service: `test-service-${Math.floor(Math.random() * 100)}`,
+          //   environment: 'production',
+          //   timestamp: timestamp,
+          //   message: "this is a test log line from k6"
+          // }
+        ]
+      }
+    ]
   });
 }
 
-// LogsQL query for testing query performance
-const logsQLQuery = {
-  query: '_time:5m | level="INFO"',
-};
-
-// Main test function
-export default function () {
+function perform_ingestion_test() {
   // Ingestion test
   const ingestionPayload = generateLogEntry();
-  const ingestionParams = {
-    headers: { 'Content-Type': 'application/json' },
+
+  const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': `Basic ${encodedCredentials}`
   };
 
-  const ingestionRes = http.post(ingestionEndpoint, ingestionPayload, ingestionParams);
+  const params = {
+    headers: headers,
+  };
+
+  const ingestionRes = http.post(ingestionEndpoint, ingestionPayload, params);
   check(ingestionRes, {
     'ingestion status is 204': (r) => r.status === 204,
   });
@@ -83,13 +108,29 @@ export default function () {
   if (ingestionRes.status === 204) {
     ingestionSuccessCounter.add(1);
   }
+  //--------------------------------------- finish ingestion---------------------------------------------------------//
+}
 
-  // Query test (runs after ingestion phase due to scenario startTime)
-  const queryParams = {
-    headers: { 'Content-Type': 'application/json' },
+
+function perform_query_test() {
+  // LogsQL query for testing query performance
+  const start = Math.floor(Date.now() / 1000) - 604800
+  const end = Math.floor(Date.now() / 1000)
+  const logsQLQuery = '{kubernetes.pod_namespace: "loki"}';
+  const limit = 1000;
+
+  const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': `Basic ${encodedCredentials}`
   };
+  const params = {
+    headers: headers
+  };
+  const payload = `query=${encodeURIComponent(logsQLQuery)}&start=${start}&end=${end}&limit=${limit}`
 
-  const queryRes = http.post(queryEndpoint, JSON.stringify(logsQLQuery), queryParams);
+  const queryRes = http.post(queryEndpoint, payload, params);
+  console.log(queryRes.status);
+
   check(queryRes, {
     'query status is 200': (r) => r.status === 200,
   });
@@ -99,6 +140,14 @@ export default function () {
   if (queryRes.status === 200) {
     querySuccessCounter.add(1);
   }
+}
+
+
+// Main test function
+export default function () {
+
+  perform_ingestion_test()
+  perform_query_test()
 
   // Simulate user think time
   sleep(Math.random() * 2); // Random sleep between 0-2 seconds
