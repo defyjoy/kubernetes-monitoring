@@ -69,22 +69,17 @@ function generateLogEntry() {
       {
         stream: { job: "k6-test", app: 'loadtest' },
         values: [
-          `${Date.now() * 1_000_000}`, // time in nanoseconds
-          "this is a test log line from k6",
-          // {
-          //   _msg: `Test log entry at ${timestamp}`,
-          //   level: ['INFO', 'ERROR', 'DEBUG'][Math.floor(Math.random() * 3)],
-          //   service: `test-service-${Math.floor(Math.random() * 100)}`,
-          //   environment: 'production',
-          //   timestamp: timestamp,
-          //   message: "this is a test log line from k6"
-          // }
+          [
+            `${parseInt(Date.now() * 1000000)}`, // time in nanoseconds
+            "This is a test log line from k6"
+          ]
         ]
       }
     ]
   });
 }
 
+// Perform injection test 
 function perform_ingestion_test() {
   // Ingestion test
   const ingestionPayload = generateLogEntry();
@@ -108,28 +103,32 @@ function perform_ingestion_test() {
   if (ingestionRes.status === 204) {
     ingestionSuccessCounter.add(1);
   }
+
+  sleep(Math.random() * 2); // Random sleep between 0-2 seconds
   //--------------------------------------- finish ingestion---------------------------------------------------------//
 }
 
-
+// Perform Query test
 function perform_query_test() {
   // LogsQL query for testing query performance
   const start = Math.floor(Date.now() / 1000) - 604800
   const end = Math.floor(Date.now() / 1000)
-  const logsQLQuery = '{kubernetes.pod_namespace: "loki"}';
+  const query = '{app:"loadtest"}';
   const limit = 1000;
+  const payload = `query=${encodeURIComponent(query)}&start=${start}&end=${end}&limit=${limit}`
 
   const headers = {
-    'Content-Type': 'application/json',
+    'Content-Type': 'application/x-www-form-urlencoded',
     'Authorization': `Basic ${encodedCredentials}`
   };
+
   const params = {
     headers: headers
   };
-  const payload = `query=${encodeURIComponent(logsQLQuery)}&start=${start}&end=${end}&limit=${limit}`
+
 
   const queryRes = http.post(queryEndpoint, payload, params);
-  console.log(queryRes.status);
+  // console.log(queryRes.status);
 
   check(queryRes, {
     'query status is 200': (r) => r.status === 200,
@@ -140,6 +139,7 @@ function perform_query_test() {
   if (queryRes.status === 200) {
     querySuccessCounter.add(1);
   }
+  console.log(queryRes.status)
 }
 
 
