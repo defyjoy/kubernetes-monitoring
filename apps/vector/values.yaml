@@ -1,4 +1,6 @@
 vector:
+  role: "Agent" # Other options: "Aggregator"
+  
   # Vector agent configuration
   customConfig:
     data_dir: /vector-data-dir
