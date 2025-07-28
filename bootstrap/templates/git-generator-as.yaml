@@ -7,7 +7,7 @@ spec:
   generators:
     - git:
         repoURL: https://github.com/defyjoy/kubernetes-monitoring
-        revision: feat/argocd
+        revision: feat/argocd-deployment
         directories:
           - path: apps/*
   template:
