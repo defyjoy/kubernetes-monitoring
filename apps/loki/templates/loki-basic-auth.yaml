@@ -3,9 +3,5 @@ data:
   .htpasswd: bG9raTokYXByMSRNY2p1eXdoOSRLL1phb295RE9UUlhnbjVrSDhVeFMwCg==
 kind: Secret
 metadata:
-  creationTimestamp: "2025-07-28T17:58:36Z"
   name: loki-basic-auth
-  namespace: loki
-  resourceVersion: "81457"
-  uid: 97dcd552-223b-412c-89af-99ba2cc142c0
 type: Opaque
