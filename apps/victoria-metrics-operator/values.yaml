@@ -1,0 +1,9 @@
+victoria-metrics-operator:
+  serviceMonitor:
+    enabled: false
+
+  admissionWebhooks:
+    enabled: false
+  crds:
+    # -- manages CRD creation. Disables CRD creation only in combination with `crds.plain: false` due to helm dependency conditions limitation
+    enabled: true

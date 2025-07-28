@@ -1,7 +1,0 @@
-controller:
-  metrics:
-    enabled: false
-    serviceMonitor:
-      enabled: true
-      additionalLabels:
-        release: monitoring

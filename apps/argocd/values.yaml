@@ -1,0 +1,23 @@
+argo-cd:
+  global:
+    domain: "argocd.172.18.0.0.nip.io"
+  configs:
+    params:
+      server.insecure: true
+
+  server:
+    ingress:
+      enabled: true
+      controller: generic
+      labels: {}
+      annotations: {}
+        # nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+        # nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+
+      # -- Defines which ingress controller will implement the resource
+      ingressClassName: "nginx"
+      hostname: "argocd.172.18.0.0.nip.io"
+      path: /
+      pathType: Prefix
+      tls: false
+ 
