@@ -3,10 +3,6 @@ kind: VLCluster
 metadata:
   name: victoria-metrics-cluster
 spec:
-  requestLoadBalancer:
-    enabled: true
-    spec:
-      replicacount: 2
   vlinsert:
     replicaCount: 2
   vlselect:
