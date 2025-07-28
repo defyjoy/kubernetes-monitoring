@@ -6,7 +6,7 @@ metadata:
 spec:
   generators:
     - git:
-        repoURL: https://github.com/defyjoy/kubernetes-monitoring
+        repoURL: git@github.com:defyjoy/kubernetes-monitoring.git
         revision: feat/argocd-deployment
         directories:
           - path: apps/*
@@ -16,7 +16,7 @@ spec:
     spec:
       project: default
       source:
-        repoURL: https://github.com/defyjoy/kubernetes-monitoring
+        repoURL: git@github.com:defyjoy/kubernetes-monitoring.git
         targetRevision: main
         path: '{{ `{{path}}` }}'
       destination:
