@@ -2,7 +2,7 @@ apiVersion: metallb.io/v1beta1
 kind: IPAddressPool
 metadata:
   name: kind-pool
-  namespace: metallb-system
+  namespace: metallb
 spec:
   addresses:
   - 172.18.0.0/24
