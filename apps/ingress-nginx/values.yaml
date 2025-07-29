@@ -6,3 +6,6 @@ ingress-nginx:
         enabled: true
         additionalLabels:
           release: monitoring
+
+    admissionWebhooks:
+      enabled: true
