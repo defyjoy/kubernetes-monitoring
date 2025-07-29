@@ -120,6 +120,15 @@ tasks:
     cmds:
     - echo "Finished installing helm charts"
 
+  register-repo:
+    desc: get argocd password
+    cmds:
+      # - export ARGOCD_PASSWORD=$(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d)
+      - export ARGOCD_PASSWORD=$(argocd admin initial-password -n argocd)
+      # - argocd login --port-forward --port-forward-namespace argocd --username admin --password $(argocd admin initial-password -n argocd) localhost:8080
+      - argocd login localhost:8080 --username admin --password $ARGOCD_PASSWORD
+      - argocd repo add git@github.com:defyjoy/kubernetes-monitoring.git --ssh-private-key-path ~/.ssh/id_ed25519
+
   destroy:
     desc: destroy all helm installations
     cmds:
@@ -127,3 +136,4 @@ tasks:
     - helm list --all-namespaces | grep -q 'grafana-prom-stack' && helm uninstall grafana-prom-stack -n kube-prometheus-stack || echo "Release 'grafana-prom-stack' does not exist."
     - helm list --all-namespaces | grep -q 'openebs' && helm uninstall openebs -n openebs || echo "Release 'openebs' does not exist."
     - helm list --all-namespaces | grep -q 'loki' && helm uninstall loki -n loki || echo "Release 'loki' does not exist."
+
