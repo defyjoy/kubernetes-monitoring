@@ -40,6 +40,8 @@ kube-prometheus-stack:
                   - worker
 
   prometheus:
+    annotations:
+      argocd.argoproj.io/skip-health-check: 'true' # https://github.com/argoproj/argo-cd/issues/11261
     prometheusSpec:
       affinity:
         nodeAffinity:
