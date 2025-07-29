@@ -8,4 +8,4 @@ ingress-nginx:
           release: monitoring
 
     admissionWebhooks:
-      enabled: true
+      enabled: false
