@@ -28,6 +28,17 @@ kube-prometheus-stack:
     #   finalizers:
     #     - kubernetes.io/pvc-protection
 
+  prometheus-node-exporter:
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+            - matchExpressions:
+                - key: role
+                  operator: In
+                  values:
+                  - worker
+
   prometheus:
     prometheusSpec:
       affinity:
