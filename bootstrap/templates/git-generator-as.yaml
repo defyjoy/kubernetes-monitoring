@@ -10,6 +10,8 @@ spec:
         revision: feat/argocd-deployment
         directories:
           - path: apps/*
+          - path: apps/minio-bak
+            exclude: true
   template:
     metadata:
       name: '{{ `{{path.basename}}` }}'
