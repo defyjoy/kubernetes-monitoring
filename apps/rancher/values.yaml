@@ -1,0 +1,31 @@
+rancher:
+  ingress:
+    enabled: true
+    includeDefaultExtraAnnotations: true
+    extraAnnotations: {}
+    ingressClassName: nginx
+    # Certain ingress controllers will require the pathType or path to be set to a different value.
+    pathType: Prefix
+    path: /
+    # Backend port number; should use either: 80, or 443.
+    # Must use 443 when `service.disableHTTP` is set to true.
+    servicePort: 80
+
+    # configurationSnippet - Add additional Nginx configuration. This example statically sets a header on the ingress.
+    # configurationSnippet: |
+    #   more_set_input_headers "X-Forwarded-Host: {{ .Values.hostname }}";
+
+    tls:
+      source: rancher
+      secretName: tls-rancher-ingress
+
+
+  letsEncrypt:
+    # email: none@example.com
+    environment: production
+    ingress:
+      # options: traefik, nginx
+      class: nginx
+  # If you are using certs signed by a private CA set to 'true' and set the 'tls-ca'
+  # in the 'cattle-system' namespace. See the README.md for details
+  privateCA: false
