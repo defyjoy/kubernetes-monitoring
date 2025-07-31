@@ -1,0 +1,15 @@
+ollama:
+  ingress:
+    enabled: true
+    className: nginx
+    hosts:
+      - host: ollama.172.18.0.0.nip.io
+        paths:
+          - path: /
+            pathType: Prefix
+  ollama:
+    gpu:
+      enabled: true
+      type: amd
+    models:
+      - llama
