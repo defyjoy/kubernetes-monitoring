@@ -12,4 +12,7 @@ ollama:
       enabled: true
       type: amd
     models:
-      - llama
+      pull:
+        - llama2
+      run:
+        - llama2
