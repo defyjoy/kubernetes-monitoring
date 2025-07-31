@@ -1,0 +1,29 @@
+ingress:
+  enabled: false  # Disable local ingress since we're using Cloudflare Tunnel
+
+service:
+  type: ClusterIP
+  port: 80
+
+atlantis:
+  config: |
+    repos:
+    - id: /.*/
+      apply_requirements: [mergeable]
+      workflow: default
+      allowed_overrides: [apply_requirements, workflow]
+    workflows:
+      default:
+        plan:
+          steps:
+          - init
+          - plan
+        apply:
+          steps:
+          - apply
+    # GitHub configuration
+    github:
+      user: defyjoy
+      token: $GITHUB_TOKEN
+      secret: $WEBHOOK_SECRET
+      webhook_secret: $WEBHOOK_SECRET
