@@ -33,6 +33,7 @@ kube-prometheus-stack:
       labels: {}
       hosts: 
         - grafana.172.18.0.0.nip.io
+        - grafana.workquark.org
       path: /
       # tls: []
       # - secretName: grafana-general-tls
