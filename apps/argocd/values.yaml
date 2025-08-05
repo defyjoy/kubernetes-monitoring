@@ -20,4 +20,8 @@ argo-cd:
       path: /
       pathType: Prefix
       tls: false
+      
+      extraHosts:
+      - name: argocd.workquark.org
+        path: /
  
