@@ -12,13 +12,11 @@ external-dns:
           name: cloudflare-api-token-secret
           key: CF_API_TOKEN
     - name: CF_API_EMAIL
-      value: info@workquark.com
+      value: joydeep.roychowdhury@workquark.com
 
-
+  domainFilters: 
+    - workquark.org
   extraArgs:
-    - --source=service # ingress is also possible
-    - --source=ingress # ingress is also possible
-    - --domain-filter=workquark.org # (optional) limit to only example.com domains; change to match the zone created above.
     - --zone-id-filter=adc7ae11210cca8ff8f3a89ca0e2cbf5 # (optional) limit to a specific zone.
     - --cloudflare-proxied # (optional) enable the proxy feature of Cloudflare (DDOS protection, CDN...)
     - --cloudflare-dns-records-per-page=500 # (optional) configure how many DNS records to fetch per request
