@@ -29,7 +29,8 @@ kube-prometheus-stack:
       ingressClassName: nginx
       annotations:
         external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
-        external-dns.alpha.kubernetes.io/target: "172.18.0.0"
+        external-dns.alpha.kubernetes.io/hostname: grafana.workquark.org
+        external-dns.alpha.kubernetes.io/target: e0d08a7f-8b37-48cf-9f08-530eb64fbb24.cfargotunnel.com
         # kubernetes.io/ingress.class: nginx
         # kubernetes.io/tls-acme: "true"
       labels: {}
