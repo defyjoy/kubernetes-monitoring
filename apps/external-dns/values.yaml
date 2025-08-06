@@ -1,4 +1,6 @@
 external-dns:
+  logLevel: debug
+
   serviceMonitor:
     enabled: true
 
