@@ -1,19 +1,46 @@
 vault:
+  injector:
+    enabled: true.
+    externalVaultAddr: ""
+
   server:
-    ha:
+    updateStrategyType: "OnDelete"
+    ingress:
       enabled: true
-      replicas: 1
-    dataStorage:
-      enabled: true
-      storageClass: standard
-    haStorage:
-      raft:
-        enabled: true
-    standalone:
+      ingressClassName: nginx
+      labels:
+        app: hashicorp-vault
+      annotations: {}
+        # kubernetes.io/ingress.class: nginx
+        # kubernetes.io/tls-acme: "true"
+      hosts:
+        - host: vault.172.18.0.0.nip.io
+          paths:
+            - path: /
+      tls: []
+      #  - secretName: chart-example-tls
+      #    hosts:
+      #      - chart-example.local
+
+    # Run Vault in "dev" mode. This requires no further setup, no state management,
+    # and no initialization. This is useful for experimenting with Vault without
+    # needing to unseal, store keys, et. al. All data is lost on restart - do not
+    # use dev mode for anything other than experimenting.
+    # See https://www.vaultproject.io/docs/concepts/dev-server.html to know more
+    dev:
       enabled: false
 
-  injector:
-    enabled: false
+    # Run Vault in "standalone" mode. This is the default mode that will deploy if
+    # no arguments are given to helm. This requires a PVC for data storage to use
+    # the "file" backend.  This mode is not highly available and should not be scaled
+    # past a single replica.
+    standalone:
+      enabled: "-"
+    ha:
+      enabled: true
+      replicas: 3
 
+  # Vault UI
   ui:
     enabled: true
+  
