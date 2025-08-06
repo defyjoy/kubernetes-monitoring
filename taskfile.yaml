@@ -1,11 +1,19 @@
 version: '3'
 
+env:
+  CLUSTER_NAME: quick-start
+
 tasks:
-  create_cluster:
+  destroy-cluster:
+    desc: destroy kind cluster 
+    cmds:
+      - kind delete cluster --name $CLUSTER_NAME
+      
+  create-cluster:
     desc: Build the project
     dir: ./kind
     cmds:
-    - kind create cluster --name quick-start --config=kind.cfg
+    - kind create cluster --name $CLUSTER_NAME --config=kind.cfg
 
   install-repos:
     desc: install all helm chart repos
@@ -19,7 +27,20 @@ tasks:
     - helm repo add vector https://helm.vector.dev
     - helm repo add victoriametrics https://victoriametrics.github.io/helm-charts/
     - helm repo add portainer https://portainer.github.io/k8s/
+    - helm repo add otwld https://helm.otwld.com/
     - helm repo update
+
+  deploy-argocd:
+    desc: installation of argocd
+    dir: apps/argocd
+    cmds:
+      - helm upgrade -i argocd . -n argocd --create-namespace --wait
+  
+  bootstrap-argocd:
+    desc: bootstrapping argocd cluster
+    dir: bootstrap
+    cmds: 
+      - helm upgrade -i bootstrap . -n argocd 
 
   install-metallb-manifests:
     desc: Install metallb manifests
@@ -56,69 +77,69 @@ tasks:
         echo "Secret '$SECRET_NAME' already exists in namespace '$NAMESPACE'."
       fi
 
-  install-metallb:
-    desc: Install metallb in namespace metallb-system
-    dir: metallb
-    cmds:
-    - helm upgrade -i metallb metallb/metallb -n metallb-system --create-namespace --wait
+  # install-metallb:
+  #   desc: Install metallb in namespace metallb-system
+  #   dir: metallb
+  #   cmds:
+  #   - helm upgrade -i metallb metallb/metallb -n metallb-system --create-namespace --wait
 
-  install-ingress-nginx:
-    desc: Install ingress-nginx controller in ingress-nginx namespace
-    dir: nginx-ingress
-    cmds:
-    - helm upgrade -i ingress-nginx ingress-nginx/ingress-nginx -f values.yaml -n ingress-nginx --create-namespace --wait
+  # install-ingress-nginx:
+  #   desc: Install ingress-nginx controller in ingress-nginx namespace
+  #   dir: nginx-ingress
+  #   cmds:
+  #   - helm upgrade -i ingress-nginx ingress-nginx/ingress-nginx -f values.yaml -n ingress-nginx --create-namespace --wait
 
-  install-kube-prometheus-stack:
-    desc: Install kube-prometheus-stack
-    dir: kube-prometheus-stack
-    cmds:
-    - helm upgrade -i grafana-prom-stack prometheus-community/kube-prometheus-stack -f values.yaml -n kube-prometheus-stack --create-namespace --wait
+  # install-kube-prometheus-stack:
+  #   desc: Install kube-prometheus-stack
+  #   dir: kube-prometheus-stack
+  #   cmds:
+  #   - helm upgrade -i grafana-prom-stack prometheus-community/kube-prometheus-stack -f values.yaml -n kube-prometheus-stack --create-namespace --wait
 
-  install-openebs:
-    desc: Install openebs storage solution
-    dir: openebs
-    cmds:
-    - helm upgrade -i openebs openebs/openebs -n openebs --create-namespace -f values.yaml --wait
+  # install-openebs:
+  #   desc: Install openebs storage solution
+  #   dir: openebs
+  #   cmds:
+  #   - helm upgrade -i openebs openebs/openebs -n openebs --create-namespace -f values.yaml --wait
 
-  install-standalone-minio:
-    desc: Install standalone minio
-    dir: minio/standalone
-    cmds:
-    - helm upgrade -i minio minio/minio -n minio --create-namespace -f values.yaml --wait
+  # install-standalone-minio:
+  #   desc: Install standalone minio
+  #   dir: minio/standalone
+  #   cmds:
+  #   - helm upgrade -i minio minio/minio -n minio --create-namespace -f values.yaml --wait
 
-  install-loki:
-    desc: Install loki
-    dir: loki
-    cmds:
-    - helm dep up
-    - helm upgrade -i loki . -n loki --create-namespace --wait -f values.yaml
+  # install-loki:
+  #   desc: Install loki
+  #   dir: loki
+  #   cmds:
+  #   - helm dep up
+  #   - helm upgrade -i loki . -n loki --create-namespace --wait -f values.yaml
 
-  install-vector:
-    desc: Install vector
-    dir: vector
-    cmds:
-    - helm upgrade -i vector vector/vector -n vector --create-namespace -f values.yaml
+  # install-vector:
+  #   desc: Install vector
+  #   dir: vector
+  #   cmds:
+  #   - helm upgrade -i vector vector/vector -n vector --create-namespace -f values.yaml
 
-  install-victoria-metrics-operator:
-    desc: Install victoria metrics operator
-    dir: victoria-metrics-operator
-    cmds:
-    - helm dep up
-    - helm upgrade -i victoria-metrics-operator . -n victoria-metrics-operator --create-namespace -f values.yaml --wait
+  # install-victoria-metrics-operator:
+  #   desc: Install victoria metrics operator
+  #   dir: victoria-metrics-operator
+  #   cmds:
+  #   - helm dep up
+  #   - helm upgrade -i victoria-metrics-operator . -n victoria-metrics-operator --create-namespace -f values.yaml --wait
 
-  deploy:
-    desc: bootstrapping installations
-    deps:
-    - install-metallb
-    - install-ingress-nginx
-    - install-kube-prometheus-stack
-    - install-openebs
-    # - install-standalone-minio
-    - install-loki-secrets
-    - install-vector
-    # - install-loki
-    cmds:
-    - echo "Finished installing helm charts"
+  # deploy:
+  #   desc: bootstrapping installations
+  #   deps:
+  #   - install-metallb
+  #   - install-ingress-nginx
+  #   - install-kube-prometheus-stack
+  #   - install-openebs
+  #   # - install-standalone-minio
+  #   - install-loki-secrets
+  #   - install-vector
+  #   # - install-loki
+  #   cmds:
+  #   - echo "Finished installing helm charts"
 
   register-repo:
     desc: get argocd password
@@ -129,11 +150,11 @@ tasks:
       - argocd login localhost:8080 --username admin --password $ARGOCD_PASSWORD
       - argocd repo add git@github.com:defyjoy/kubernetes-monitoring.git --ssh-private-key-path ~/.ssh/id_ed25519
 
-  destroy:
-    desc: destroy all helm installations
-    cmds:
-    - helm list --all-namespaces | grep -q 'ingress-nginx' && helm uninstall ingress-nginx -n ingress-nginx || echo "Release 'ingress-nginx' does not exist."
-    - helm list --all-namespaces | grep -q 'grafana-prom-stack' && helm uninstall grafana-prom-stack -n kube-prometheus-stack || echo "Release 'grafana-prom-stack' does not exist."
-    - helm list --all-namespaces | grep -q 'openebs' && helm uninstall openebs -n openebs || echo "Release 'openebs' does not exist."
-    - helm list --all-namespaces | grep -q 'loki' && helm uninstall loki -n loki || echo "Release 'loki' does not exist."
+  # destroy:
+  #   desc: destroy all helm installations
+  #   cmds:
+  #   - helm list --all-namespaces | grep -q 'ingress-nginx' && helm uninstall ingress-nginx -n ingress-nginx || echo "Release 'ingress-nginx' does not exist."
+  #   - helm list --all-namespaces | grep -q 'grafana-prom-stack' && helm uninstall grafana-prom-stack -n kube-prometheus-stack || echo "Release 'grafana-prom-stack' does not exist."
+  #   - helm list --all-namespaces | grep -q 'openebs' && helm uninstall openebs -n openebs || echo "Release 'openebs' does not exist."
+  #   - helm list --all-namespaces | grep -q 'loki' && helm uninstall loki -n loki || echo "Release 'loki' does not exist."
 

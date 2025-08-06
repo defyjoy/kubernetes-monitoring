@@ -22,7 +22,7 @@ rancher:
 
   letsEncrypt:
     # email: none@example.com
-    environment: production
+    environment: staging
     ingress:
       # options: traefik, nginx
       class: nginx
