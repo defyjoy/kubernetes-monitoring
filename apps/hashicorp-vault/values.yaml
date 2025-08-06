@@ -9,8 +9,8 @@ vault:
     tlsDisable: true
 
   injector:
-    extraEnvironmentVars:
-      VAULT_TLS_DISABLE: "true"
+    extraEnvironmentVars: {}
+      # VAULT_TLS_DISABLE: "true"
     # True if you want to enable vault agent injection.
     enabled: true
 
