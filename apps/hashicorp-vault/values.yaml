@@ -4,6 +4,8 @@ vault:
     externalVaultAddr: ""
 
   server:
+    dataStorage:
+      storageClass: openebs-hostpath
     updateStrategyType: "OnDelete"
     ingress:
       enabled: true
