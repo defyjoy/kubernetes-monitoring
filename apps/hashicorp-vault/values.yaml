@@ -2,7 +2,7 @@ vault:
   global:
     enabled: true
   injector:
-    enabled: true.
+    enabled: true
     externalVaultAddr: ""
 
   server:
