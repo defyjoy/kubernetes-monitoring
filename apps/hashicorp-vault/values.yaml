@@ -16,7 +16,7 @@ vault:
       hosts:
         - host: vault.172.18.0.0.nip.io
           paths:
-            - path: /
+            - /
       tls: []
       #  - secretName: chart-example-tls
       #    hosts:
