@@ -46,4 +46,4 @@ spec:
     - static:
         url: http://vlclusterlb-victoria-metrics-cluster.victoria-metrics-operator.svc:8427
       paths:
-        - /loki/api/v1/push
+        - /insert/loki/api/v1/push
