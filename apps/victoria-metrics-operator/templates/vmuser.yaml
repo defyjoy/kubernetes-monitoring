@@ -30,5 +30,6 @@ spec:
         url: http://vlclusterlb-victoria-metrics-cluster.victoria-metrics-operator.svc:8427
       paths: 
         - /
+        - /select/*
         - /select/vmui
         - /select/vmui/.*
