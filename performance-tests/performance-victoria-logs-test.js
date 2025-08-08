@@ -11,16 +11,13 @@ const queryErrorRate = new Rate('query_error_rate');
 const ingestionSuccessCounter = new Counter('ingestion_success_count');
 const querySuccessCounter = new Counter('query_success_count');
 
-const USERNAME = "admin"
-const PASSWORD = "password"
+const USERNAME = __ENV.USER;
+const PASSWORD = __ENV.PASSWORD;
 // VictoriaLogs endpoint configuration
 const baseUrl = 'http://vmauth.172.18.0.0.nip.io'; // Replace with your VictoriaLogs instance URL
 const ingestionEndpoint = `${baseUrl}/insert/loki/api/v1/push`; // Endpoint for log ingestion
 const queryEndpoint = `${baseUrl}/select/logsql/query`; // Endpoint for LogsQL queries
 
-// // Read username and password from environment variables.
-// const username = __ENV.USER;
-// const password = __ENV.PASSWORD;
 
 // Encode credentials for Basic Auth
 const credentials = `${USERNAME}:${PASSWORD}`;
@@ -30,6 +27,7 @@ const encodedCredentials = encoding.b64encode(credentials);
 export const options = {
   scenarios: {
     ingestion: {
+      exec: 'perform_ingestion_test',
       executor: 'ramping-vus',
       stages: [
         { duration: '1s', target: 10 }, // Ramp up to 10 VUs
@@ -39,11 +37,12 @@ export const options = {
       ],
     },
     querying: {
+      exec: 'perform_query_test',
       executor: 'ramping-vus',
       // startTime: '2m', // Start querying after ingestion phase
-      startTime: '10s', // Start querying after ingestion phase
+      startTime: '3s', // Start querying after ingestion phase
       stages: [
-        { duration: '1s', target: 5 }, // Ramp up to 5 VUs
+        { duration: '1s', target: 10 }, // Ramp up to 5 VUs
         // { duration: '1m', target: 20 }, // Ramp up to 20 VUs
         // { duration: '1m', target: 20 }, // Hold at 20 VUs
         // { duration: '30s', target: 0 }, // Ramp down
@@ -80,7 +79,7 @@ function generateLogEntry() {
 }
 
 // Perform injection test 
-function perform_ingestion_test() {
+export function perform_ingestion_test() {
   // Ingestion test
   const ingestionPayload = generateLogEntry();
 
@@ -109,12 +108,13 @@ function perform_ingestion_test() {
 }
 
 // Perform Query test
-function perform_query_test() {
+export function perform_query_test() {
   // LogsQL query for testing query performance
   const start = Math.floor(Date.now() / 1000) - 604800
   const end = Math.floor(Date.now() / 1000)
-  const query = '{app:"loadtest"}';
+  const query = '{app="loadtest"}';
   const limit = 1000;
+
   const payload = `query=${encodeURIComponent(query)}&start=${start}&end=${end}&limit=${limit}`
 
   const headers = {
@@ -128,7 +128,6 @@ function perform_query_test() {
 
 
   const queryRes = http.post(queryEndpoint, payload, params);
-  // console.log(queryRes.status);
 
   check(queryRes, {
     'query status is 200': (r) => r.status === 200,
@@ -139,41 +138,4 @@ function perform_query_test() {
   if (queryRes.status === 200) {
     querySuccessCounter.add(1);
   }
-  console.log(queryRes.status)
-}
-
-
-// Main test function
-export default function () {
-
-  perform_ingestion_test()
-  perform_query_test()
-
-  // Simulate user think time
-  sleep(Math.random() * 2); // Random sleep between 0-2 seconds
-}
-
-// Custom summary for detailed reporting
-export function handleSummary(data) {
-  return {
-    'stdout': JSON.stringify({
-      ingestion: {
-        avg_duration_ms: data.metrics.ingestion_duration.values.avg,
-        p95_duration_ms: data.metrics.ingestion_duration.values['p(95)'],
-        error_rate: data.metrics.ingestion_error_rate.values.rate,
-        success_count: data.metrics.ingestion_success_count.values.count,
-      },
-      querying: {
-        avg_duration_ms: data.metrics.query_duration.values.avg,
-        p95_duration_ms: data.metrics.query_duration.values['p(95)'],
-        error_rate: data.metrics.query_error_rate.values.rate,
-        success_count: data.metrics.query_success_count.values.count,
-      },
-      http: {
-        failed_requests: data.metrics.http_req_failed.values.rate,
-        avg_request_duration_ms: data.metrics.http_req_duration.values.avg,
-        p95_request_duration_ms: data.metrics.http_req_duration.values['p(95)'],
-      },
-    }, null, 2),
-  };
 }
