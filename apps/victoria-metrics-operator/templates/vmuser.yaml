@@ -12,8 +12,6 @@ spec:
         url: http://vlclusterlb-victoria-metrics-cluster.victoria-metrics-operator.svc:8427
       paths: 
         - /
-
-
 ---
 apiVersion: operator.victoriametrics.com/v1beta1
 kind: VMUser
@@ -33,3 +31,19 @@ spec:
         - /select/vmui
         - /select/vmui/.*
         - /select/logsql/.*
+---
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMUser
+metadata:
+  name: writer
+  labels:
+    auth: "true"
+spec:
+  name: writer
+  username: writer
+  password: password
+  targetRefs:
+    - static:
+        url: http://vlclusterlb-victoria-metrics-cluster.victoria-metrics-operator.svc:8427
+      paths:
+        - /loki/api/v1/push
