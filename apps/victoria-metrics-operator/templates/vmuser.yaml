@@ -32,4 +32,4 @@ spec:
         - /
         - /select/vmui
         - /select/vmui/.*
-        - /select/logsql/.+
+        - /select/logsql/.*
