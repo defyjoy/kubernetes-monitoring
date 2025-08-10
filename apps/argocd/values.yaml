@@ -19,13 +19,13 @@ argo-cd:
 
       # -- Defines which ingress controller will implement the resource
       ingressClassName: "nginx"
-      hostname: argocd.192.168.49.100.nip.io
+      hostname: argocd.workquark.org
       path: /
       pathType: Prefix
       tls: false
       
       extraHosts:
-      - name: aargocd.172.18.0.0.nip.io
+      - name: argocd.172.18.0.0.nip.io
         path: /
       - name: argocd.192.168.49.100.nip.io
         path: /
