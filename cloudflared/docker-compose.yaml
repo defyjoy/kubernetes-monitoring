@@ -1,0 +1,11 @@
+## Run chmod 777 ~/.cloudflared/* else wont work
+
+services:
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflared
+    restart: unless-stopped
+    network_mode: host  # gives access to localhost services
+    volumes:
+      - /home/joydeep/.cloudflared:/home/nonroot/.cloudflared/
+    command: tunnel --config /home/nonroot/.cloudflared/config.yml run

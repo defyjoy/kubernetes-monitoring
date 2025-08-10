@@ -17,7 +17,7 @@ This repo deploys various components across kind cluster on your localhost.
 You would need taskfile for deployment- [https://taskfile.dev/](https://taskfile.dev/). You would need to run the below commands from the root of the directory ( location of taskfile.yaml in root)
 
 
-# CLOUD FLARE TUNNEL
+# CLOUD FLARE TUNNEL ( KIND )
 
 Create cloudflare tunnel - 
 
@@ -27,6 +27,11 @@ NOTE : `--network kind` is important.
 
 ```
 docker run -d --name cloudflared --network kind cloudflare/cloudflared:latest tunnel --no-autoupdate run --token <cloudflare tunnel token>
+```
+
+
+```
+docker run -d --name cloudflared --network kind cloudflare/cloudflared:latest tunnel --no-autoupdate run --token <Token> 
 ```
 
 ## CREATE KIND CLUSTER -
