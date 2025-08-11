@@ -1,4 +1,4 @@
-hashicorp-vault:
+vault:
   server:
     updateStrategyType: "OnDelete"
     ingress:
