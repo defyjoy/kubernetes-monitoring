@@ -1,23 +1,23 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-	name: argocd
-	namespace: argocd
+  name: argocd
+  namespace: argocd
 spec:
-	project: default
-	source:
-		repoURL: git@github.com:defyjoy/kubernetes-monitoring.git
-		targetRevision: feat/argocd-deployment
-		path: apps/argocd
-		helm:
-			valueFiles:
-				- values.yaml
-	destination:
-		server: https://kubernetes.default.svc
-		namespace: argocd
-	syncPolicy:
-		automated:
-			prune: true
-			selfHeal: true
-		syncOptions:
-			- CreateNamespace=true
+  project: default
+  source:
+    repoURL: git@github.com:defyjoy/kubernetes-monitoring.git
+    targetRevision: feat/argocd-deployment
+    path: apps/argocd
+    helm:
+      valueFiles:
+        - values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
