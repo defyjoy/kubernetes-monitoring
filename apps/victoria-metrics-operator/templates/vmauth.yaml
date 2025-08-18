@@ -11,14 +11,16 @@ spec:
   ingress:
     name: victoria-auth-ingress
     class_name: nginx
-    host: vmauth.172.18.0.0.nip.io
+    host: vmauth.workquark.org
     annotations:
       nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
       nginx.ingress.kubernetes.io/rewrite-target: /
       nginx.ingress.kubernetes.io/ssl-redirect: "false"
       nginx.ingress.kubernetes.io/proxy-body-size: 100M
-    # annotations:
-    #   cert-maanger.io/cluster-issuer: letsencrypt
+      # cert-maanger.io/cluster-issuer: letsencrypt
+      external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"                                                            │
+│     external-dns.alpha.kubernetes.io/hostname: vmauth.workquark.org                                                        │
+│     external-dns.alpha.kubernetes.io/target: 2f781e1f-bbaa-472d-a5ea-bb89b7dc5f02.cfargotunnel.com 
     # extraTls:
     #   - hosts: []
     #     secretName: ""

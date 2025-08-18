@@ -4,49 +4,63 @@ env:
   CLUSTER_NAME: quick-start
 
 tasks:
-  destroy-cluster:
-    desc: destroy kind cluster 
-    cmds:
-      - kind delete cluster --name $CLUSTER_NAME
-      
-  create-cluster:
-    desc: Build the project
+  provision-kind-cluster:
+    desc: Create a multi-node kind cluster
     dir: ./kind
     cmds:
     - kind create cluster --name $CLUSTER_NAME --config=kind.cfg
 
+  destroy-kind-cluster:
+    desc: destroy kind cluster
+    cmds:
+    - kind delete cluster --name $CLUSTER_NAME
+
+  provision-minikube-cluster:
+    desc: Create a minikube cluster
+    cmds:
+    - minikube start --nodes=3 --driver=docker --cpus=8 --memory=16g --ha=true
+    - sleep 30
+    - minikube node add
+    - minikube node add
+    - minikube node add
+
+  destroy-kind-minikube:
+    desc: Destroy minikube cluster
+    cmds:
+    - minikube delete
+
   install-repos:
     desc: install all helm chart repos
     cmds:
-    - helm repo add metallb https://metallb.github.io/metallb
-    - helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-    - helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-    - helm repo add minio https://charts.min.io/
-    - helm repo add grafana https://grafana.github.io/helm-charts
-    - helm repo add openebs https://openebs.github.io/openebs
-    - helm repo add vector https://helm.vector.dev
-    - helm repo add victoriametrics https://victoriametrics.github.io/helm-charts/
-    - helm repo add portainer https://portainer.github.io/k8s/
-    - helm repo add otwld https://helm.otwld.com/
+    - helm repo add metallb https://metallb.github.io/metallb # metallb
+    - helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx # ingress-nginx
+    - helm repo add prometheus-community https://prometheus-community.github.io/helm-charts # kube-prometheus-stack
+    - helm repo add minio https://charts.min.io/ # minio
+    - helm repo add grafana https://grafana.github.io/helm-charts # grafana
+    - helm repo add openebs https://openebs.github.io/openebs # openebs
+    - helm repo add vector https://helm.vector.dev # vector
+    - helm repo add victoriametrics https://victoriametrics.github.io/helm-charts/ # victoria metrics / victoria metrics operator
+    - helm repo add portainer https://portainer.github.io/k8s/ # portainer
+    - helm repo add otwld https://helm.otwld.com/ # ollama
     - helm repo update
 
   deploy-argocd:
-    desc: installation of argocd
+    desc: provision argocd on cluster
     dir: apps/argocd
     cmds:
-      - helm upgrade -i argocd . -n argocd --create-namespace --wait
-  
+    - helm upgrade -i argocd . -n argocd --create-namespace --wait
+
   bootstrap:
-    desc: bootstrapping argocd cluster
+    desc: bootstrap argocd apps
     dir: apps/argocd-apps
     cmds:
-      - helm upgrade -i bootstrap . -n argocd
+    - helm upgrade -i bootstrap . -n argocd
 
   register-repo:
     desc: get argocd password
     cmds:
-      # - export ARGOCD_PASSWORD=$(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d)
-      - export ARGOCD_PASSWORD=$(argocd admin initial-password -n argocd)
-      # - argocd login --port-forward --port-forward-namespace argocd --username admin --password $(argocd admin initial-password -n argocd) localhost:8080
-      - argocd login localhost:8080 --username admin --password $ARGOCD_PASSWORD
-      - argocd repo add git@github.com:defyjoy/kubernetes-monitoring.git --ssh-private-key-path ~/.ssh/id_ed25519
+    - export ARGOCD_PASSWORD=$(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d)
+    # - export ARGOCD_PASSWORD=$(argocd admin initial-password -n argocd)
+    # - argocd login --port-forward --port-forward-namespace argocd --username admin --password $(argocd admin initial-password -n argocd) localhost:8080
+    - argocd login localhost:8080 --username admin --password $ARGOCD_PASSWORD
+    - argocd repo add git@github.com:defyjoy/kubernetes-monitoring.git --ssh-private-key-path ~/.ssh/id_ed25519
