@@ -39,8 +39,8 @@ vmusers:
   targetRefs:
   - static:
       urls:
-      - http://victoria-logs-cluster-1-victoria-metrics-operator.victoria-logs-cluster-1.svc:8427
-      - http://victoria-logs-cluster-2-victoria-metrics-operator.victoria-logs-cluster-2.svc:8427
+      - http://vlclusterlb-victoria-logs-cluster-1-victoria-logs-cluster.victoria-logs-cluster-1.svc:8427
+      - http://vlclusterlb-victoria-logs-cluster-2-victoria-logs-cluster.victoria-logs-cluster-2.svc:8427
     paths:
     - /
     - /select/vmui
