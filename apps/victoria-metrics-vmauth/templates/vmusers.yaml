@@ -1,0 +1,21 @@
+{{- range .Values.vmusers }}
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMUser
+metadata:
+  name: {{ .name }}
+  labels:
+    auth: "true"
+spec:
+  username: {{ .username }}
+  password: {{ .password }}
+  targetRefs:
+    {{- range .targetRefs }}
+    - static:
+        url: {{ .static.url }}
+      paths:
+        {{- range .paths }}
+        - {{ . | quote }}
+        {{- end }}
+    {{- end }}
+---
+{{- end }}

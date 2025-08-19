@@ -33,23 +33,13 @@ vmusers:
 #     paths:
 #     - /
 
-# - name: reader
-#   username: reader
-#   password: password
-#   targetRefs:
-#   - static:
-#       url: http://vlclusterlb-victoria-metrics-cluster.victoria-metrics-operator.svc:8427
-#     paths:
-#     - /
-#     - /select/vmui
-#     - /select/vmui/.*
-#     - /select/logsql/.*
-
-- name: writer
-  username: writer
+- name: reader
+  username: reader
   password: password
   targetRefs:
   - static:
-      url: http://vlclusterlb-victoria-metrics-cluster.victoria-metrics-operator.svc:8427
+      urls:
+      - http://victoria-logs-cluster-1-victoria-metrics-operator.victoria-logs-cluster-1.svc:8427
+      - http://victoria-logs-cluster-2-victoria-metrics-operator.victoria-logs-cluster-2.svc:8427
     paths:
-    - /insert/loki/api/v1/push
+    - /
