@@ -12,7 +12,7 @@ spec:
             environment: default
   template:
     metadata:
-      name: "`{{cluster}}`-kube-prometheus-stack"
+      name: "{{`{{cluster}}`}}-kube-prometheus-stack"
       namespace: argocd
     spec:
       project: default
