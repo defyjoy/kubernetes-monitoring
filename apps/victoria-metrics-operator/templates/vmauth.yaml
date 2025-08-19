@@ -28,7 +28,7 @@
 apiVersion: operator.victoriametrics.com/v1beta1
 kind: VMAuth
 metadata:
-  name: {{ .Release.Name }}-victoria-metrics-auth
+  name: {{ .Release.Name }}
   labels:
     app.kubernetes.io/name: victoria-metrics-auth
     app.kubernetes.io/instance: {{ .Release.Name }}
