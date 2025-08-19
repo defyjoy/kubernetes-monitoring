@@ -43,3 +43,6 @@ vmusers:
       - http://victoria-logs-cluster-2-victoria-metrics-operator.victoria-logs-cluster-2.svc:8427
     paths:
     - /
+    - /select/vmui
+    - /select/vmui/.*
+    - /select/logsql/.*
