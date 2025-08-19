@@ -29,6 +29,6 @@ vmusers:
   password: password
   targetRefs:
   - static:
-      url: http://vlclusterlb-victoria-logs-cluster-1-victoria-logs-cluster.victoria-logs-cluster-1.svc:8427
+      url: http://vlclusterlb-victoria-logs-cluster-1.victoria-logs-cluster-1.svc:8427
     paths:
     - /insert/loki/api/v1/push
