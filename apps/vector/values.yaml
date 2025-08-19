@@ -1,6 +1,6 @@
 vector:
   role: "Agent" # Other options: "Aggregator"
-  
+
   # Vector agent configuration
   customConfig:
     data_dir: /vector-data-dir
@@ -25,7 +25,8 @@ vector:
         type: loki
         inputs:
         - transform-kubelogs
-        endpoint: http://vmauth.172.18.0.0.nip.io/insert # victoria logs loki format
+        # endpoint: http://vmauth.172.18.0.0.nip.io/insert # victoria logs loki format
+        endpoint: http://vmauth.workquark.org/insert # victoria logs loki format/ via cloudflare tunnel
         encoding:
           codec: json
         labels:
