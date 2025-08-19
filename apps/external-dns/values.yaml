@@ -19,6 +19,11 @@ external-dns:
 
   domainFilters:
   - workquark.org
+
+  policy: sync
+
+  txtOwnerId: kind-cluster
+
   extraArgs:
   - --zone-id-filter=adc7ae11210cca8ff8f3a89ca0e2cbf5 # (optional) limit to a specific zone.
   - --cloudflare-proxied # (optional) enable the proxy feature of Cloudflare (DDOS protection, CDN...)
