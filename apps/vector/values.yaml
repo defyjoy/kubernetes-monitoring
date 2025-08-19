@@ -21,12 +21,15 @@ vector:
           ._msg = .message
           # .formatted_message = parse_json!(.message)  
     sinks:
-      victorialogs:
+      # Cluster 1
+      cluster-1:
         type: loki
+        compression: zstd
         inputs:
         - transform-kubelogs
         # endpoint: http://vmauth.172.18.0.0.nip.io/insert # victoria logs loki format
-        endpoint: http://vmauth.workquark.org/insert # victoria logs loki format/ via cloudflare tunnel
+        # endpoint: http://vmauth.workquark.org/insert # victoria logs loki format/ via cloudflare tunnel
+        endpoint: http://vlclusterlb-victoria-logs-cluster-1-victoria-logs-cluster.victoria-logs-cluster-1.svc.local:8427 # victoria logs loki format/ via cloudflare tunnel
         encoding:
           codec: json
         labels:
@@ -37,19 +40,22 @@ vector:
         request:
           in_flight_limit: 1
         out_of_order_action: accept
-        path: /loki/api/v1/push
+        path: /insert/loki/api/v1/push
         remove_timestamp: true
         auth:
           strategy: basic
           user: writer
           password: password
-      grafana-loki:
+
+      # Cluster 2
+      cluster-2:
         type: loki
-        tenant_id: dev
+        compression: zstd
         inputs:
         - transform-kubelogs
-        # endpoint: http://172.18.0.0.nip.io/insert # victoria logs loki format
-        endpoint: http://loki-gateway.172.18.0.0.nip.io
+        # endpoint: http://vmauth.172.18.0.0.nip.io/insert # victoria logs loki format
+        # endpoint: http://vmauth.workquark.org/insert # victoria logs loki format/ via cloudflare tunnel
+        endpoint: http://vlclusterlb-victoria-logs-cluster-2-victoria-logs-cluster.victoria-logs-cluster-2.svc.local:8427 # victoria logs loki format/ via cloudflare tunnel
         encoding:
           codec: json
         labels:
@@ -60,12 +66,36 @@ vector:
         request:
           in_flight_limit: 1
         out_of_order_action: accept
-        path: /loki/api/v1/push
+        path: /insert/loki/api/v1/push
         remove_timestamp: true
         auth:
           strategy: basic
-          user: loki
+          user: writer
           password: password
+      # grafana-loki:
+      #   type: loki
+      #   tenant_id: dev
+      #   inputs:
+      #   - transform-kubelogs
+      #   # endpoint: http://172.18.0.0.nip.io/insert # victoria logs loki format
+      #   endpoint: http://loki-gateway.172.18.0.0.nip.io
+      #   encoding:
+      #     codec: json
+      #   labels:
+      #     job: vector
+      #     namespace: "{{`{{ kubernetes.pod_namespace }}`}}"
+      #     container: "{{`{{ kubernetes.container_name }}`}}"
+      #   healthcheck: false
+      #   request:
+      #     in_flight_limit: 1
+      #   out_of_order_action: accept
+      #   path: /loki/api/v1/push
+      #   remove_timestamp: true
+      #   auth:
+      #     strategy: basic
+      #     user: loki
+      #     password: password
+
   serviceAccount:
     create: true
     name: ""

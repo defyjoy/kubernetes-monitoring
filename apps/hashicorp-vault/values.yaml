@@ -15,12 +15,10 @@ vault:
         external-dns.alpha.kubernetes.io/hostname: vault.workquark.org
         external-dns.alpha.kubernetes.io/target: 2f781e1f-bbaa-472d-a5ea-bb89b7dc5f02.cfargotunnel.com
       hosts:
-        - host: vault.192.168.49.100.nip.io
-          paths:
-            - /
-        - host: vault.workquark.org
-          paths:
-            - /
+      - host: vault.192.168.49.100.nip.io
+        paths: [ / ]
+      - host: vault.workquark.org
+        paths: [ / ]
       tls: []
       #  - secretName: chart-example-tls
       #    hosts:

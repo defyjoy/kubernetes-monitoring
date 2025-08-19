@@ -1,0 +1,16 @@
+vmauth:
+  ingress:
+    enabled: true
+    name: victoria-auth-ingress
+    className: nginx
+    host: vmauth-cluster-2.workquark.org
+
+vmusers:
+- name: writer
+  username: writer
+  password: password
+  targetRefs:
+  - static:
+      url: http://vlclusterlb-victoria-logs-cluster-2-victoria-logs-cluster.victoria-logs-cluster-2.svc:8427
+    paths:
+    - /insert/loki/api/v1/push

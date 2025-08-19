@@ -1,27 +1,3 @@
-victoria-metrics-operator:
-  serviceMonitor:
-    enabled: false
-
-  admissionWebhooks:
-    enabled: false
-  crds:
-    # -- manages CRD creation. Disables CRD creation only in combination with `crds.plain: false` due to helm dependency conditions limitation
-    enabled: true
-
-vlinsert:
-  replicaCount: 2
-
-vlselect:
-  replicaCount: 2
-
-vlstorage:
-  retentionPeriod: "1y"
-  replicaCount: 2
-
-requestsLoadBalancer:
-  enabled: true
-  replicaCount: 2
-
 vmauth:
   selectAllByDefault: false
   userSelector:
@@ -48,15 +24,6 @@ vmauth:
     #     secretName: vmauth-tls
 
 vmusers:
-- name: writer
-  username: writer
-  password: password
-  targetRefs:
-  - static:
-      url: http://vlclusterlb-victoria-metrics-cluster.victoria-metrics-operator.svc:8427
-    paths:
-    - /insert/loki/api/v1/push
-
 # - name: admin
 #   username: admin
 #   password: password
@@ -77,3 +44,12 @@ vmusers:
 #     - /select/vmui
 #     - /select/vmui/.*
 #     - /select/logsql/.*
+
+- name: writer
+  username: writer
+  password: password
+  targetRefs:
+  - static:
+      url: http://vlclusterlb-victoria-metrics-cluster.victoria-metrics-operator.svc:8427
+    paths:
+    - /insert/loki/api/v1/push

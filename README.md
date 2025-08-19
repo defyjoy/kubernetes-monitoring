@@ -53,3 +53,30 @@ task deploy-argocd
 ```
 task bootstrap-argocd
 ```
+
+
+## MINIKUBE 
+
+Start minikube with 3 nodes 
+
+```
+minikube start --nodes=1 --driver=docker --memory=4g --cpus=2
+```
+
+# VAULT
+
+Create initial secret for vault secret store with token.
+This secret would be used by ESO to read secrets and sync secrets.
+
+```
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: vault-token
+data:
+  token: cm9vdA== # "root"
+```
+OR 
+```
+kubectl create secret generic vault-token --from-literal=token=admin -n external-secrets

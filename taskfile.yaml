@@ -23,6 +23,28 @@ tasks:
     - minikube node add
     - minikube node add
     - minikube node add
+    - sleep 120
+
+  deploy-argocd:
+    desc: provision argocd on cluster
+    dir: apps/argocd
+    cmds:
+    - helm upgrade -i argocd . -n argocd --create-namespace --wait
+
+  bootstrap:
+    desc: bootstrap argocd apps
+    dir: apps/argocd-apps
+    cmds:
+    - helm upgrade -i bootstrap . -n argocd --wait
+
+  deploy:
+    desc: create a multi-node kind cluster and deploy argocd
+    cmds:
+    - task: provision-kind-cluster
+    # - sleep 120
+    - task: deploy-argocd
+    # - sleep 60
+    - task: bootstrap
 
   destroy-kind-minikube:
     desc: Destroy minikube cluster
@@ -43,18 +65,6 @@ tasks:
     - helm repo add portainer https://portainer.github.io/k8s/ # portainer
     - helm repo add otwld https://helm.otwld.com/ # ollama
     - helm repo update
-
-  deploy-argocd:
-    desc: provision argocd on cluster
-    dir: apps/argocd
-    cmds:
-    - helm upgrade -i argocd . -n argocd --create-namespace --wait
-
-  bootstrap:
-    desc: bootstrap argocd apps
-    dir: apps/argocd-apps
-    cmds:
-    - helm upgrade -i bootstrap . -n argocd
 
   register-repo:
     desc: get argocd password
