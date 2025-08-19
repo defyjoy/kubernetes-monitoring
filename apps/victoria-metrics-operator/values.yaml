@@ -32,15 +32,15 @@ vmauth:
     enabled: true
     name: victoria-auth-ingress
     className: nginx
-    host: vmauth.workquark.org
+    host: "" # vmauth.workquark.org
     annotations:
       nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
       nginx.ingress.kubernetes.io/rewrite-target: /
       nginx.ingress.kubernetes.io/ssl-redirect: "false"
       nginx.ingress.kubernetes.io/proxy-body-size: 100M
       external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
-      external-dns.alpha.kubernetes.io/hostname: vmauth.workquark.org
-      external-dns.alpha.kubernetes.io/target: 2f781e1f-bbaa-472d-a5ea-bb89b7dc5f02.cfargotunnel.com
+      external-dns.alpha.kubernetes.io/hostname: "" # hostname for the ingress
+      external-dns.alpha.kubernetes.io/target: "" #"2f781e1f-bbaa-472d-a5ea-bb89b7dc5f02.cfargotunnel.com"
     # Uncomment and configure for TLS
     # extraTls:
     #   - hosts:
