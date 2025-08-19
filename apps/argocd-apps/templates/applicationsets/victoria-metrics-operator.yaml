@@ -11,7 +11,7 @@ spec:
           - name: victoria-logs-cluster-2
   template:
     metadata:
-      name: '{{cluster}}-victoria-metrics-operator'
+      name: {{name}}
       namespace: argocd
     spec:
       project: default
