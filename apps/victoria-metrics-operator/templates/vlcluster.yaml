@@ -19,7 +19,7 @@
 apiVersion: operator.victoriametrics.com/v1
 kind: VLCluster
 metadata:
-  name: {{ .Release.Name }}-victoria-logs-cluster
+  name: {{ .Release.Name }}
   labels:
     app.kubernetes.io/name: victoria-metrics
     app.kubernetes.io/instance: {{ .Release.Name }}
