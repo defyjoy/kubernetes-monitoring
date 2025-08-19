@@ -28,8 +28,8 @@ vector:
         inputs:
         - transform-kubelogs
         # endpoint: http://vmauth.172.18.0.0.nip.io/insert # victoria logs loki format
-        # endpoint: http://vmauth.workquark.org/insert # victoria logs loki format/ via cloudflare tunnel
-        endpoint: http://vlclusterlb-victoria-logs-cluster-1.victoria-logs-cluster-1.svc.local:8427 # victoria logs internal lb/ loki format/ via cloudflare tunnel
+        endpoint: http://vmauth-cluster-1.workquark.org # victoria logs loki format/ via cloudflare tunnel
+        # endpoint: http://vlclusterlb-victoria-logs-cluster-1.victoria-logs-cluster-1.svc.local:8427 # victoria logs internal lb/ loki format/ via cloudflare tunnel
         encoding:
           codec: json
         labels:
@@ -54,8 +54,8 @@ vector:
         inputs:
         - transform-kubelogs
         # endpoint: http://vmauth.172.18.0.0.nip.io/insert # victoria logs loki format
-        # endpoint: http://vmauth.workquark.org/insert # victoria logs loki format/ via cloudflare tunnel
-        endpoint: http://vlclusterlb-victoria-logs-cluster-2.victoria-logs-cluster-2.svc.local:8427 # victoria logs loki format/ via cloudflare tunnel
+        endpoint: http://vmauth-cluster-2.workquark.org # victoria logs loki format/ via cloudflare tunnel
+        # endpoint: http://vlclusterlb-victoria-logs-cluster-2.victoria-logs-cluster-2.svc.local:8427 # victoria logs loki format/ via cloudflare tunnel
         encoding:
           codec: json
         labels:
