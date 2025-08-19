@@ -4,24 +4,26 @@ external-dns:
   serviceMonitor:
     enabled: true
 
-  provider:  # @schema type: [object, string];
+  provider:
+    # @schema type: [object, string];
     # -- _ExternalDNS_ provider name; for the available providers and how to configure them see [README](https://github.com/kubernetes-sigs/external-dns/blob/master/charts/external-dns/README.md#providers).
     name: cloudflare
   env:
-    - name: CF_API_TOKEN
-      valueFrom:
-        secretKeyRef:
-          name: cloudflare-api-key
-          key: apiKey
-    - name: CF_API_EMAIL
-      value: joydeep.roychowdhury@workquark.com
+  - name: CF_API_TOKEN
+    valueFrom:
+      secretKeyRef:
+        name: cloudflare-api-key
+        key: apiKey
+  - name: CF_API_EMAIL
+    value: joydeep.roychowdhury@workquark.com
 
-  domainFilters: 
-    - workquark.org
+  domainFilters:
+  - workquark.org
   extraArgs:
-    - --zone-id-filter=adc7ae11210cca8ff8f3a89ca0e2cbf5 # (optional) limit to a specific zone.
-    - --cloudflare-proxied # (optional) enable the proxy feature of Cloudflare (DDOS protection, CDN...)
-    - --cloudflare-dns-records-per-page=500 # (optional) configure how many DNS records to fetch per request
-    # - --cloudflare-regional-services # (optional) enable the regional hostname feature that configure which region can decrypt HTTPS requests
-    # - --cloudflare-region-key="eu" # (optional) configure which region can decrypt HTTPS requests
-    - --cloudflare-record-comment="provisioned by external-dns" # (optional) configure comments for provisioned records; <=100 chars for free zones; <=500 chars for paid zones
+  - --policy=upsert-only
+  - --zone-id-filter=adc7ae11210cca8ff8f3a89ca0e2cbf5 # (optional) limit to a specific zone.
+  - --cloudflare-proxied # (optional) enable the proxy feature of Cloudflare (DDOS protection, CDN...)
+  - --cloudflare-dns-records-per-page=500 # (optional) configure how many DNS records to fetch per request
+  # - --cloudflare-regional-services # (optional) enable the regional hostname feature that configure which region can decrypt HTTPS requests
+  # - --cloudflare-region-key="eu" # (optional) configure which region can decrypt HTTPS requests
+  - --cloudflare-record-comment="provisioned by external-dns" # (optional) configure comments for provisioned records; <=100 chars for free zones; <=500 chars for paid zones
