@@ -1,0 +1,34 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: victoria-metrics-operator
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - name: victoria-logs-cluster-1
+          - name: victoria-logs-cluster-2
+  template:
+    metadata:
+      name: '{{cluster}}-victoria-metrics-operator'
+      namespace: argocd
+    spec:
+      project: default
+      source:
+        repoURL: git@github.com:defyjoy/kubernetes-monitoring.git
+        targetRevision: feat/argocd-deployment
+        path: apps/victoria-metrics-operator
+        helm:
+          valueFiles:
+            - values.yaml
+            - values/{{name}}/values.yaml
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: {{name}}
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true

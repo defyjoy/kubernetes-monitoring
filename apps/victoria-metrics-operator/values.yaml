@@ -7,3 +7,73 @@ victoria-metrics-operator:
   crds:
     # -- manages CRD creation. Disables CRD creation only in combination with `crds.plain: false` due to helm dependency conditions limitation
     enabled: true
+
+vlinsert:
+  replicaCount: 2
+
+vlselect:
+  replicaCount: 2
+
+vlstorage:
+  retentionPeriod: "1y"
+  replicaCount: 2
+
+requestsLoadBalancer:
+  enabled: true
+  replicaCount: 2
+
+vmauth:
+  selectAllByDefault: false
+  userSelector:
+    matchLabels:
+      auth: "true"
+
+  ingress:
+    enabled: true
+    name: victoria-auth-ingress
+    className: nginx
+    host: vmauth.workquark.org
+    annotations:
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+      nginx.ingress.kubernetes.io/rewrite-target: /
+      nginx.ingress.kubernetes.io/ssl-redirect: "false"
+      nginx.ingress.kubernetes.io/proxy-body-size: 100M
+      external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+      external-dns.alpha.kubernetes.io/hostname: vmauth.workquark.org
+      external-dns.alpha.kubernetes.io/target: 2f781e1f-bbaa-472d-a5ea-bb89b7dc5f02.cfargotunnel.com
+    # Uncomment and configure for TLS
+    # extraTls:
+    #   - hosts:
+    #       - vmauth.workquark.org
+    #     secretName: vmauth-tls
+
+vmusers:
+# - name: admin
+#   username: admin
+#   password: password
+#   targetRefs:
+#   - static:
+#       url: http://vlclusterlb-victoria-metrics-cluster.victoria-metrics-operator.svc:8427
+#     paths:
+#     - /
+
+# - name: reader
+#   username: reader
+#   password: password
+#   targetRefs:
+#   - static:
+#       url: http://vlclusterlb-victoria-metrics-cluster.victoria-metrics-operator.svc:8427
+#     paths:
+#     - /
+#     - /select/vmui
+#     - /select/vmui/.*
+#     - /select/logsql/.*
+
+- name: writer
+  username: writer
+  password: password
+  targetRefs:
+  - static:
+      url: http://vlclusterlb-victoria-metrics-cluster.victoria-metrics-operator.svc:8427
+    paths:
+    - /insert/loki/api/v1/push

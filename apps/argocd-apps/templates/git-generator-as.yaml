@@ -12,6 +12,8 @@ spec:
           - path: apps/*
           - path: apps/minio-bak
             exclude: true
+          - path: apps/victoria-metrics-operator
+            exclude: true
   template:
     metadata:
       name: '{{ `{{path.basename}}` }}'

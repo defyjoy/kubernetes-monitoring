@@ -1,49 +1,71 @@
+# apiVersion: operator.victoriametrics.com/v1beta1
+# kind: VMUser
+# metadata:
+#   name: admin
+#   labels:
+#     auth: "true"
+# spec:
+#   username: admin
+#   password: password
+#   targetRefs:
+#     - static:
+#         url: http://vlclusterlb-victoria-metrics-cluster.victoria-metrics-operator.svc:8427
+#       paths: 
+#         - /
+# ---
+# apiVersion: operator.victoriametrics.com/v1beta1
+# kind: VMUser
+# metadata:
+#   name: reader
+#   labels:
+#     auth: "true"
+# spec:
+#   name: reader
+#   username: reader
+#   password: password
+#   targetRefs:
+#     - static:
+#         url: http://vlclusterlb-victoria-metrics-cluster.victoria-metrics-operator.svc:8427
+#       paths: 
+#         - /
+#         - /select/vmui
+#         - /select/vmui/.*
+#         - /select/logsql/.*
+# ---
+# apiVersion: operator.victoriametrics.com/v1beta1
+# kind: VMUser
+# metadata:
+#   name: writer
+#   labels:
+#     auth: "true"
+# spec:
+#   name: writer
+#   username: writer
+#   password: password
+#   targetRefs:
+#     - static:
+#         url: http://vlclusterlb-victoria-metrics-cluster.victoria-metrics-operator.svc:8427
+#       paths:
+#         - /insert/loki/api/v1/push
+
+{{- range .Values.vmusers }}
 apiVersion: operator.victoriametrics.com/v1beta1
 kind: VMUser
 metadata:
-  name: admin
+  name: {{ .name }}
   labels:
     auth: "true"
 spec:
-  username: admin
-  password: password
+  username: {{ .username }}
+  password: {{ .password }}
   targetRefs:
+    {{- range .targetRefs }}
     - static:
-        url: http://vlclusterlb-victoria-metrics-cluster.victoria-metrics-operator.svc:8427
-      paths: 
-        - /
----
-apiVersion: operator.victoriametrics.com/v1beta1
-kind: VMUser
-metadata:
-  name: reader
-  labels:
-    auth: "true"
-spec:
-  name: reader
-  username: reader
-  password: password
-  targetRefs:
-    - static:
-        url: http://vlclusterlb-victoria-metrics-cluster.victoria-metrics-operator.svc:8427
-      paths: 
-        - /
-        - /select/vmui
-        - /select/vmui/.*
-        - /select/logsql/.*
----
-apiVersion: operator.victoriametrics.com/v1beta1
-kind: VMUser
-metadata:
-  name: writer
-  labels:
-    auth: "true"
-spec:
-  name: writer
-  username: writer
-  password: password
-  targetRefs:
-    - static:
-        url: http://vlclusterlb-victoria-metrics-cluster.victoria-metrics-operator.svc:8427
+        url: {{ .static.url }}
       paths:
-        - /insert/loki/api/v1/push
+        {{- range .paths }}
+        - {{ . | quote }}
+        {{- end }}
+    {{- end }}
+---
+{{- end }}

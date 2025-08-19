@@ -1,16 +1,37 @@
+# apiVersion: operator.victoriametrics.com/v1
+# kind: VLCluster
+# metadata:
+#   name: victoria-metrics-cluster
+# spec:
+#   vlinsert:
+#     replicaCount: 2
+#   vlselect:
+#     replicaCount: 2
+#   vlstorage:
+#     retentionPeriod: "1y"
+#     replicaCount: 2
+#   requestsLoadBalancer:
+#     enabled: true
+#     spec:
+#      replicaCount: 2
+
+
 apiVersion: operator.victoriametrics.com/v1
 kind: VLCluster
 metadata:
-  name: victoria-metrics-cluster
+  name: {{ .Release.Name }}-victoria-logs-cluster
+  labels:
+    app.kubernetes.io/name: victoria-metrics
+    app.kubernetes.io/instance: {{ .Release.Name }}
 spec:
   vlinsert:
-    replicaCount: 2
+    replicaCount: {{ .Values.vlinsert.replicaCount }}
   vlselect:
-    replicaCount: 2
+    replicaCount: {{ .Values.vlselect.replicaCount }}
   vlstorage:
-    retentionPeriod: "1y"
-    replicaCount: 2
+    retentionPeriod: {{ .Values.vlstorage.retentionPeriod | quote }}
+    replicaCount: {{ .Values.vlstorage.replicaCount }}
   requestsLoadBalancer:
-    enabled: true
+    enabled: {{ .Values.requestsLoadBalancer.enabled }}
     spec:
-     replicaCount: 2
+      replicaCount: {{ .Values.requestsLoadBalancer.replicaCount }}

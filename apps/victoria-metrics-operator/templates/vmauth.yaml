@@ -1,26 +1,49 @@
+# apiVersion: operator.victoriametrics.com/v1beta1
+# kind: VMAuth
+# metadata:
+#   name: victoria-metrics-auth
+# spec:
+#   selectAllByDefault: false
+#   userSelector:
+#     matchLabels:
+#         auth: "true"
+#   # Ingress configuration (optional, for external access)
+#   ingress:
+#     name: victoria-auth-ingress
+#     class_name: nginx
+#     host: vmauth.workquark.org
+#     annotations:
+#       nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+#       nginx.ingress.kubernetes.io/rewrite-target: /
+#       nginx.ingress.kubernetes.io/ssl-redirect: "false"
+#       nginx.ingress.kubernetes.io/proxy-body-size: 100M
+#       # cert-maanger.io/cluster-issuer: letsencrypt
+#       external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+#       external-dns.alpha.kubernetes.io/hostname: vmauth.workquark.org
+#       external-dns.alpha.kubernetes.io/target: 2f781e1f-bbaa-472d-a5ea-bb89b7dc5f02.cfargotunnel.com
+#     # extraTls:
+#     #   - hosts: []
+#     #     secretName: ""
+
 apiVersion: operator.victoriametrics.com/v1beta1
 kind: VMAuth
 metadata:
-  name: victoria-metrics-auth
+  name: {{ .Release.Name }}-victoria-metrics-auth
+  labels:
+    app.kubernetes.io/name: victoria-metrics-auth
+    app.kubernetes.io/instance: {{ .Release.Name }}
 spec:
-  selectAllByDefault: false
+  selectAllByDefault: {{ .Values.vmauth.selectAllByDefault }}
   userSelector:
     matchLabels:
-        auth: "true"
-  # Ingress configuration (optional, for external access)
+      {{- toYaml .Values.vmauth.userSelector.matchLabels | nindent 6 }}
   ingress:
-    name: victoria-auth-ingress
-    class_name: nginx
-    host: vmauth.workquark.org
+    name: {{ .Values.vmauth.ingress.name }}
+    class_name: {{ .Values.vmauth.ingress.className }}
+    host: {{ .Values.vmauth.ingress.host }}
     annotations:
-      nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
-      nginx.ingress.kubernetes.io/rewrite-target: /
-      nginx.ingress.kubernetes.io/ssl-redirect: "false"
-      nginx.ingress.kubernetes.io/proxy-body-size: 100M
-      # cert-maanger.io/cluster-issuer: letsencrypt
-      external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
-      external-dns.alpha.kubernetes.io/hostname: vmauth.workquark.org
-      external-dns.alpha.kubernetes.io/target: 2f781e1f-bbaa-472d-a5ea-bb89b7dc5f02.cfargotunnel.com
-    # extraTls:
-    #   - hosts: []
-    #     secretName: ""
+      {{- toYaml .Values.vmauth.ingress.annotations | nindent 6 }}
+    {{- if .Values.vmauth.ingress.extraTls }}
+    extraTls:
+      {{- toYaml .Values.vmauth.ingress.extraTls | nindent 6 }}
+    {{- end }}
