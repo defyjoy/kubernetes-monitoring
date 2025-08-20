@@ -7,8 +7,6 @@
 
 ```
 kubectl create ns external-dns
-kubectl create secret generic cloudflare-api-token-secret --from-literal=CF_API_KEY=<token> -n external-dns
-kubectl create secret generic  cloudflare-api-key --from-literal=CF_API_KEY=<token> -n external-dns
 kubectl create secret generic  cloudflare-api-key --from-literal=apiKey=<cloudflare api key> -n external-dns
 ```
 

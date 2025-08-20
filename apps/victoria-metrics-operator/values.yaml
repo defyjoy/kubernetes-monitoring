@@ -40,7 +40,7 @@ vmauth:
       nginx.ingress.kubernetes.io/proxy-body-size: 100M
       external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
       external-dns.alpha.kubernetes.io/hostname: "" # hostname for the ingress
-      external-dns.alpha.kubernetes.io/target: "" #"2f781e1f-bbaa-472d-a5ea-bb89b7dc5f02.cfargotunnel.com"
+      external-dns.alpha.kubernetes.io/target: "" #"96d9d557-1bc6-4572-a608-a6330e6b5f90.cfargotunnel.com"
     # Uncomment and configure for TLS
     # extraTls:
     #   - hosts:

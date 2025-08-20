@@ -29,6 +29,7 @@ tasks:
     desc: provision argocd on cluster
     dir: apps/argocd
     cmds:
+    - helm dep up
     - helm upgrade -i argocd . -n argocd --create-namespace --wait
 
   bootstrap:
