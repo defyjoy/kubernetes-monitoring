@@ -16,9 +16,13 @@ spec:
             exclude: true
           - path: apps/kube-prometheus-stack
             exclude: true
+          - path: apps/metallb
+            exclude: true
   template:
     metadata:
       name: '{{ `{{path.basename}}` }}'
+      annotations:
+        argocd.argoproj.io/sync-wave: "5"
     spec:
       project: default
       source:
