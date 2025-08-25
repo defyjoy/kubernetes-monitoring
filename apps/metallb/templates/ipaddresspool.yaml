@@ -2,8 +2,9 @@ apiVersion: metallb.io/v1beta1
 kind: IPAddressPool
 metadata:
   name: kind-pool
-  namespace: metallb
+  namespace: metallb-system
 spec:
   addresses:
-  - 172.18.0.0/24 # kind
+  - 172.18.0.0/24 # kind docker / docker desktop
+  - 192.168.97.0/24 # macos orbstack
   # - 192.168.49.100/32 # 
