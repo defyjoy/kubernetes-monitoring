@@ -4,7 +4,6 @@ argo-cd:
   configs:
     params:
       server.insecure: true
-
   server:
     ingress:
       enabled: true
@@ -16,17 +15,16 @@ argo-cd:
         external-dns.alpha.kubernetes.io/target: 96d9d557-1bc6-4572-a608-a6330e6b5f90.cfargotunnel.com
         # nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
         # nginx.ingress.kubernetes.io/ssl-passthrough: "true"
-
       # -- Defines which ingress controller will implement the resource
       ingressClassName: "nginx"
       hostname: argocd.workquark.org
       path: /
       pathType: Prefix
       tls: false
-      
       extraHosts:
-      - name: argocd.172.18.0.0.nip.io
-        path: /
-      - name: argocd.192.168.49.100.nip.io
-        path: /
- 
+        - name: argocd.172.18.0.0.nip.io
+          path: /
+        - name: argocd.192.168.49.100.nip.io
+          path: /
+        - name: argocd.192.168.97.0.nip.io
+          path: /
